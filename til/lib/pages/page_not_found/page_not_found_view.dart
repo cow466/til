@@ -1,4 +1,4 @@
-import '../mockup_markdown/mockup_markdown_page.dart';
+import '../mockup_markdown/mockup_markdown.dart';
 
 const bugHandlerEmail = 'cow@hawaii.edu';
 
@@ -10,7 +10,7 @@ How did you get here?
 [Submit a bug ticket](mailto:cow@hawaii.edu)
 ''';
 
-class PageNotFoundView extends MockupMarkdownPage {
+class PageNotFoundView extends MockupMarkdownView {
   const PageNotFoundView({super.key})
       : super(
           title: "Page Not Found",
