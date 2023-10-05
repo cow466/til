@@ -9,12 +9,10 @@ class MockupMarkdownView extends StatelessWidget {
     Key? key,
     required this.title,
     required this.data,
-    required this.routeName,
   }) : super(key: key);
 
   final String title;
   final String data;
-  final String routeName;
 
   @override
   Widget build(BuildContext context) {

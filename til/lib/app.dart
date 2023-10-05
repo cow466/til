@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:til/components/my_app_bar.dart';
+import 'package:til/pages/home/home_view.dart';
 
 import 'package:til/settings/settings_controller.dart';
 import 'package:til/pages/page_not_found/page_not_found_view.dart';
@@ -32,6 +32,8 @@ class TILApp extends StatelessWidget {
           settings: routeSettings,
           builder: (context) {
             switch (routeSettings.name) {
+              case '/':
+                return const HomeView();
               default:
                 return const PageNotFoundView();
             }

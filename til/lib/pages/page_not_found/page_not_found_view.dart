@@ -1,4 +1,4 @@
-import '../mockup_markdown/mockup_markdown.dart';
+import '../mockup_markdown/mockup_markdown_view.dart';
 
 const bugHandlerEmail = 'cow@hawaii.edu';
 
@@ -15,6 +15,5 @@ class PageNotFoundView extends MockupMarkdownView {
       : super(
           title: "Page Not Found",
           data: pageSpecification,
-          routeName: "/page-not-found",
         );
 }
