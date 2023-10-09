@@ -15,6 +15,8 @@ How did you get here?
 class PageNotFoundView extends StatelessWidget {
   const PageNotFoundView({super.key});
 
+  static const routeName = "/page-not-found";
+
   @override
   Widget build(BuildContext context) {
     return const MockupMarkdownView(data: pageSpecification);

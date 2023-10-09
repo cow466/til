@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:developer' as developer;
-
-import 'package:til/views/layouts/main_layout/main_page_layout.dart';
 
 class NewPostView extends StatefulWidget {
   const NewPostView({super.key});
@@ -19,6 +16,22 @@ class _NewPostViewState extends State<NewPostView> {
 
   @override
   Widget build(BuildContext context) {
-    return Column();
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Text("Today I learned..."),
+        Container(
+          constraints: const BoxConstraints(maxWidth: 500),
+          padding: const EdgeInsets.all(20),
+          child: const TextField(
+            minLines: 1,
+            maxLines: 5,
+            decoration: InputDecoration(
+              border: OutlineInputBorder(),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }
