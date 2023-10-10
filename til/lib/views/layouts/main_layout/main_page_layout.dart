@@ -7,7 +7,7 @@ import 'package:til/views/pages/home/home_view.dart';
 import 'package:til/views/pages/new_post/new_post_view.dart';
 import 'package:til/views/pages/page_not_found/page_not_found_view.dart';
 
-class MainPageLayout extends StatelessWidget {
+class MainPageLayout extends StatefulWidget {
   const MainPageLayout({
     super.key,
     required this.body,
@@ -16,15 +16,24 @@ class MainPageLayout extends StatelessWidget {
   final Widget body;
 
   @override
+  State<MainPageLayout> createState() => _MainPageLayoutState();
+}
+
+class _MainPageLayoutState extends State<MainPageLayout> {
+  bool bottomSelected = true;
+  int pageIndex = 0;
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: const DrawerView(),
       appBar: AppBar(
-        title: const Text("Today I Learned"),
+        title: const Text('Today I Learned'),
         centerTitle: true,
         leading: IconButton(
           onPressed: () {
-            context.go("/profile");
+            bottomSelected = false;
+            context.go('/profile');
           },
           icon: const Icon(
             Icons.person,
@@ -34,7 +43,8 @@ class MainPageLayout extends StatelessWidget {
         actions: [
           IconButton(
             onPressed: () {
-              context.go("/settings");
+              bottomSelected = false;
+              context.go('/settings');
             },
             icon: const Icon(
               Icons.settings,
@@ -46,6 +56,10 @@ class MainPageLayout extends StatelessWidget {
       bottomNavigationBar: NavigationBar(
         labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
         onDestinationSelected: (value) {
+          setState(() {
+            pageIndex = value;
+            bottomSelected = true;
+          });
           context.go(
             switch (value) {
               0 => HomeView.routeName,
@@ -55,6 +69,8 @@ class MainPageLayout extends StatelessWidget {
             },
           );
         },
+        selectedIndex: pageIndex,
+        indicatorColor: bottomSelected ? null : Colors.transparent,
         destinations: const <Widget>[
           NavigationDestination(
             icon: Icon(
@@ -79,7 +95,7 @@ class MainPageLayout extends StatelessWidget {
           ),
         ],
       ),
-      body: body,
+      body: widget.body,
     );
   }
 }

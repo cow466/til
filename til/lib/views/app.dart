@@ -3,12 +3,14 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:til/settings/settings_controller.dart';
+import 'package:til/settings/sign_in.dart';
 import 'package:til/views/pages/friends/friends_view.dart';
 import 'package:til/views/pages/home/home_view.dart';
 import 'package:til/views/layouts/main_layout/main_page_layout.dart';
 import 'package:til/views/pages/new_post/new_post_view.dart';
 import 'package:til/views/pages/page_not_found/page_not_found_view.dart';
 import 'package:til/views/pages/profile/profile_view.dart';
+import 'package:til/views/pages/sign_in/sign_in_view.dart';
 
 class TILApp extends StatelessWidget {
   TILApp({
@@ -26,6 +28,13 @@ class TILApp extends StatelessWidget {
     routes: [
       ShellRoute(
         builder: (context, state, child) {
+          // check signed in
+          if (loggedInUser == null) {
+            return const MainPageLayout(
+              body: SignInView(),
+            );
+          }
+
           return MainPageLayout(
             body: child,
           );

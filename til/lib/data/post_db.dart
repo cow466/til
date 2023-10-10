@@ -38,8 +38,12 @@ class PostDB {
     return _posts.firstWhere((post) => post.id == id);
   }
 
+  List<Post> getAll() {
+    return _posts..sort((a, b) => b.postedAt.compareTo(a.postedAt));
+  }
+
   List<Post> getUserPosts(String userId) {
-    return _posts.where((post) => post.userId == userId).toList();
+    return getAll().where((post) => post.userId == userId).toList();
   }
 }
 

@@ -4,6 +4,7 @@ class User {
     required this.name,
     required this.organizationId,
     required this.email,
+    required this.aboutMe,
     required this.isVerified,
     required this.imagePath,
     required this.role,
@@ -14,6 +15,7 @@ class User {
   String name;
   String organizationId;
   String email;
+  String aboutMe;
   bool isVerified;
   String imagePath;
   Role role;
@@ -33,6 +35,7 @@ class UserDB {
       name: 'John Foo',
       organizationId: '0',
       email: 'johnfoo@hawaii.edu',
+      aboutMe: "I'm not a real person.",
       isVerified: false,
       imagePath: 'jenna-deane.jpg',
       role: Role.user,
@@ -43,6 +46,7 @@ class UserDB {
       name: 'Winston Co',
       organizationId: '0',
       email: 'cow@hawaii.edu',
+      aboutMe: 'I kinda like algorithms.',
       isVerified: true,
       imagePath: 'winston_co.png',
       role: Role.user,
@@ -53,8 +57,9 @@ class UserDB {
       name: 'Korn Jiamsripong',
       organizationId: '1',
       email: 'kornj2@illinois.edu',
+      aboutMe: "Hi. I don't like C++.",
       isVerified: true,
-      imagePath: 'winston_co.png',
+      imagePath: 'korn_jiamsripong.png',
       role: Role.user,
       friendIds: [],
     ),

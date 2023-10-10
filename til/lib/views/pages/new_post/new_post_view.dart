@@ -19,17 +19,77 @@ class _NewPostViewState extends State<NewPostView> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Text("Today I learned..."),
+        const Text(
+          'Today I learned...',
+          style: TextStyle(
+            fontSize: 36,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         Container(
           constraints: const BoxConstraints(maxWidth: 500),
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.symmetric(
+            horizontal: 48,
+            vertical: 16,
+          ),
           child: const TextField(
-            minLines: 1,
+            minLines: 5,
             maxLines: 5,
             decoration: InputDecoration(
-              border: OutlineInputBorder(),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.zero),
+              ),
+              hintText: '''
+...to fly.
+...how to ride a bike.''',
             ),
           ),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: () {},
+              style: TextButton.styleFrom(
+                backgroundColor: Colors.red,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(100),
+                ),
+              ),
+              child: const Padding(
+                padding: EdgeInsets.all(16),
+                child: Text(
+                  'Cancel',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(
+              width: 36,
+            ),
+            ElevatedButton(
+              onPressed: () {},
+              style: TextButton.styleFrom(
+                backgroundColor: Colors.green,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(100),
+                ),
+              ),
+              child: const Padding(
+                padding: EdgeInsets.all(16),
+                child: Text(
+                  'Post',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ],
     );
