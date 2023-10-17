@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:til/views/components/drawer_view.dart';
 import 'package:til/views/pages/friends/friends_view.dart';
 import 'package:til/views/pages/home/home_view.dart';
 import 'package:til/views/pages/new_post/new_post_view.dart';
 import 'package:til/views/pages/page_not_found/page_not_found_view.dart';
+import 'package:til/views/pages/profile/profile_view.dart';
 
 class MainPageLayout extends StatefulWidget {
   const MainPageLayout({
@@ -26,14 +26,13 @@ class _MainPageLayoutState extends State<MainPageLayout> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: const DrawerView(),
       appBar: AppBar(
         title: const Text('Today I Learned'),
         centerTitle: true,
         leading: IconButton(
           onPressed: () {
             bottomSelected = false;
-            context.go('/profile');
+            context.go(ProfileView.routeName);
           },
           icon: const Icon(
             Icons.person,

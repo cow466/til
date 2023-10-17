@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:til/data/post_db.dart';
 import 'package:til/data/user_db.dart';
 import 'package:til/helpers/time_format.dart';
+import 'package:til/views/pages/other_profile/other_profile_view.dart';
 
 class FeedPost extends StatelessWidget {
   const FeedPost({
@@ -24,9 +26,16 @@ class FeedPost extends StatelessWidget {
       ),
       child: Row(
         children: [
-          CircleAvatar(
-            backgroundImage: AssetImage('assets/images/${poster.imagePath}'),
-            maxRadius: 30,
+          InkWell(
+            onTap: () {
+              context.go(
+                OtherProfileView.routeName.replaceFirst(':id', poster.id),
+              );
+            },
+            child: CircleAvatar(
+              backgroundImage: AssetImage('assets/images/${poster.imagePath}'),
+              maxRadius: 30,
+            ),
           ),
           const SizedBox(
             width: 12,

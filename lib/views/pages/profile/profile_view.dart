@@ -72,9 +72,10 @@ class _ProfileViewState extends State<ProfileView> {
 
     return Row(
       children: [
-        const CircleAvatar(
+        CircleAvatar(
           minRadius: 75,
-          backgroundImage: AssetImage('assets/images/winston_co.png'),
+          backgroundImage:
+              AssetImage('assets/images/${loggedInUser!.imagePath}'),
         ),
         const SizedBox(
           width: 20,
