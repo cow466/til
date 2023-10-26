@@ -6,7 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:til/data/user_db.dart';
 import 'package:til/settings/sign_in.dart';
 import 'package:til/views/layouts/limited_layout/limited_layout.dart';
-import 'package:til/views/sign_up/sign_up_view.dart';
+import 'package:til/views/pages/sign_up/sign_up_view.dart';
 
 class SignInView extends ConsumerWidget {
   SignInView({super.key});

@@ -1,22 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:til/data/user_db.dart';
+import 'package:til/settings/sign_in.dart';
 import 'package:til/views/pages/home/home_view.dart';
 
 /// Presents the page containing fields to signup with a username and password, plus buttons.
-class SignUpView extends StatefulWidget {
+class SignUpView extends ConsumerStatefulWidget {
   const SignUpView({Key? key}) : super(key: key);
 
   static const routeName = '/sign-up';
 
   @override
-  SignUpViewState createState() => SignUpViewState();
+  ConsumerState<SignUpView> createState() => SignUpViewState();
 }
 
-class SignUpViewState extends State<SignUpView> {
-  final _usernameController = TextEditingController();
+class SignUpViewState extends ConsumerState<SignUpView> {
+  final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _mobileController = TextEditingController();
+  final _aboutMeController = TextEditingController();
+
+  late UserDB userDB;
+
+  @override
+  void initState() {
+    super.initState();
+    userDB = ref.read(userDBProvider);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +49,7 @@ class SignUpViewState extends State<SignUpView> {
         const SizedBox(height: 20.0),
         // [Name]
         TextField(
-          controller: _usernameController,
+          controller: _nameController,
           decoration: const InputDecoration(
             labelText: 'Name',
           ),
@@ -60,7 +71,7 @@ class SignUpViewState extends State<SignUpView> {
         ),
         const SizedBox(height: 12.0),
         TextField(
-          controller: _mobileController,
+          controller: _aboutMeController,
           decoration: const InputDecoration(
             labelText: 'Mobile',
           ),
@@ -68,7 +79,20 @@ class SignUpViewState extends State<SignUpView> {
         const SizedBox(height: 12.0),
         ElevatedButton(
           onPressed: () {
-            context.go(HomeView.routeName);
+            final newId = ref.read(userDBProvider).signUpWith(
+                name: _nameController.text,
+                email: _emailController.text,
+                aboutMe: _aboutMeController.text);
+            if (newId == null) {
+              // fail
+              return;
+            }
+            final newUser = ref.read(userDBProvider).getById(newId);
+            ref.read(loggedInUserNotifierProvider.notifier).signInAs(
+                  email: newUser.email,
+                  password: '',
+                  ref: ref,
+                );
           },
           child: const Text('Sign up'),
         ),

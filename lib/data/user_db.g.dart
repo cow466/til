@@ -6,11 +6,11 @@ part of 'user_db.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$userDBHash() => r'8320070d372457f0e055897f84e225a36b8f7733';
+String _$userDBHash() => r'191e8640d4ce7e731d9941b5bdd88b2c76ec6762';
 
 /// See also [userDB].
 @ProviderFor(userDB)
-final userDBProvider = AutoDisposeProvider<UserDB>.internal(
+final userDBProvider = Provider<UserDB>.internal(
   userDB,
   name: r'userDBProvider',
   debugGetCreateSourceHash:
@@ -19,6 +19,6 @@ final userDBProvider = AutoDisposeProvider<UserDB>.internal(
   allTransitiveDependencies: null,
 );
 
-typedef UserDBRef = AutoDisposeProviderRef<UserDB>;
+typedef UserDBRef = ProviderRef<UserDB>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

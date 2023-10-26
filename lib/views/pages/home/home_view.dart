@@ -18,14 +18,14 @@ class HomeView extends ConsumerStatefulWidget {
 class _HomeViewState extends ConsumerState<HomeView> {
   late UserDB userDB;
   late PostDB postDB;
-  late User loggedInUser;
+  User? loggedInUser;
 
   @override
   void initState() {
     super.initState();
     userDB = ref.read(userDBProvider);
     postDB = ref.read(postDBProvider);
-    loggedInUser = ref.read(loggedInUserNotifierProvider)!;
+    loggedInUser = ref.read(loggedInUserNotifierProvider);
   }
 
   // https://stackoverflow.com/questions/72315755/close-an-expansiontile-when-another-expansiontile-is-tapped
@@ -37,22 +37,29 @@ class _HomeViewState extends ConsumerState<HomeView> {
   }
 
   List<Widget> widgetsFromOrganization() {
+    if (loggedInUser == null) {
+      return [const Text('Create an account to join an org')];
+    }
+
     return postDB
         .getAll()
         .where((e) {
           var poster = userDB.getById(e.userId);
-          return loggedInUser.organizationId == poster.organizationId;
+          return loggedInUser!.organizationId == poster.organizationId;
         })
         .map((e) => FeedPost(post: e))
         .toList();
   }
 
   List<Widget> widgetsFromFriends() {
+    if (loggedInUser == null) {
+      return [const Text('Create an account to add friends')];
+    }
     return postDB
         .getAll()
         .where((e) {
           var poster = userDB.getById(e.userId);
-          return loggedInUser.friendIds.contains(poster.id);
+          return loggedInUser!.friendIds.contains(poster.id);
         })
         .map((e) => FeedPost(post: e))
         .toList();
@@ -78,7 +85,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
   Widget build(BuildContext context) {
     userDB = ref.watch(userDBProvider);
     postDB = ref.watch(postDBProvider);
-    loggedInUser = ref.watch(loggedInUserNotifierProvider)!;
+    loggedInUser = ref.watch(loggedInUserNotifierProvider);
 
     return ListView.builder(
       key: Key(selectedTile.toString()),

@@ -18,9 +18,9 @@ class Post {
 }
 
 class PostDB {
-  // PostDB(this.ref);
+  PostDB(this.ref);
 
-  // final ProviderRef<PostDB> ref;
+  final ProviderRef<PostDB> ref;
   final List<Post> _posts = [
     Post(
       id: '0',
@@ -65,9 +65,7 @@ class PostDB {
   }
 }
 
-PostDB _singleton = PostDB();
-
-@riverpod
+@Riverpod(keepAlive: true)
 PostDB postDB(PostDBRef ref) {
-  return _singleton;
+  return PostDB(ref);
 }

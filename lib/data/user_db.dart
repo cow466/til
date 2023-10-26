@@ -1,4 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:shortid/shortid.dart';
 
 part 'user_db.g.dart';
 
@@ -87,9 +88,29 @@ class UserDB {
   User signInAs(String email) {
     return _users.firstWhere((user) => user.email == email);
   }
+
+  String? signUpWith({
+    required String name,
+    required String email,
+    required String aboutMe,
+  }) {
+    final newUser = User(
+      id: shortid.generate(),
+      name: name,
+      organizationId: '0',
+      email: email,
+      aboutMe: aboutMe,
+      isVerified: false,
+      imagePath: 'winston_co.png',
+      role: Role.user,
+      friendIds: [],
+    );
+    _users.add(newUser);
+    return newUser.id;
+  }
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 UserDB userDB(UserDBRef ref) {
   return UserDB(ref);
 }
