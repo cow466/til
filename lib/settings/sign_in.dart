@@ -1,11 +1,17 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:til/data/user_db.dart';
 
-User? loggedInUser;
+User? _loggedInUser;
 
 Future<void> signInAs({
   required String email,
   required String password,
+  required WidgetRef ref,
 }) async {
-  var newUser = userDB.getById('1');
-  loggedInUser = newUser;
+  var newUser = ref.watch(userDBProvider).signInAs(email);
+  _loggedInUser = newUser;
 }
+
+final loggedInUserProvider = Provider((ref) {
+  return _loggedInUser;
+});

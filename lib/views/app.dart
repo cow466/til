@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 
@@ -14,81 +15,83 @@ import 'package:til/views/pages/page_not_found/page_not_found_view.dart';
 import 'package:til/views/pages/profile/profile_view.dart';
 import 'package:til/views/pages/sign_in/sign_in_view.dart';
 
-class TILApp extends StatelessWidget {
-  TILApp({
+class TILApp extends ConsumerWidget {
+  const TILApp({
     super.key,
     required this.settingsController,
   });
 
   final SettingsController settingsController;
 
-  final _router = GoRouter(
-    initialLocation: HomeView.routeName,
-    errorBuilder: (context, state) => const MainPageLayout(
-      body: PageNotFoundView(),
-    ),
-    routes: [
-      ShellRoute(
-        builder: (context, state, child) {
-          // check signed in
-          if (loggedInUser == null) {
-            return const MainPageLayout(
-              body: SignInView(),
-            );
-          }
-
-          return MainPageLayout(
-            body: child,
-          );
-        },
-        routes: [
-          GoRoute(
-            path: HomeView.routeName,
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: HomeView(),
-            ),
-          ),
-          GoRoute(
-            path: NewPostView.routeName,
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: NewPostView(),
-            ),
-          ),
-          GoRoute(
-            path: FriendsView.routeName,
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: FriendsView(),
-            ),
-          ),
-          GoRoute(
-            path: ProfileView.routeName,
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: ProfileView(),
-            ),
-          ),
-          GoRoute(
-            path: OtherProfileView.routeName,
-            pageBuilder: (context, state) {
-              final id = state.pathParameters['id'];
-              Widget child;
-              if (id == null) {
-                child = const PageNotFoundView();
-              } else if (id == loggedInUser!.id) {
-                child = const ProfileView();
-              } else {
-                final user = userDB.getById(id);
-                child = OtherProfileView(user: user);
-              }
-              return NoTransitionPage(child: child);
-            },
-          ),
-        ],
+  _createRouter(WidgetRef ref) {
+    User? loggedInUser = ref.watch(loggedInUserProvider);
+    return GoRouter(
+      initialLocation: HomeView.routeName,
+      errorBuilder: (context, state) => const MainPageLayout(
+        body: PageNotFoundView(),
       ),
-    ],
-  );
+      routes: [
+        ShellRoute(
+          builder: (context, state, child) {
+            // check signed in
+            if (loggedInUser == null) {
+              return const MainPageLayout(
+                body: SignInView(),
+              );
+            }
+
+            return MainPageLayout(
+              body: child,
+            );
+          },
+          routes: [
+            GoRoute(
+              path: HomeView.routeName,
+              pageBuilder: (context, state) => const NoTransitionPage(
+                child: HomeView(),
+              ),
+            ),
+            GoRoute(
+              path: NewPostView.routeName,
+              pageBuilder: (context, state) => const NoTransitionPage(
+                child: NewPostView(),
+              ),
+            ),
+            GoRoute(
+              path: FriendsView.routeName,
+              pageBuilder: (context, state) => const NoTransitionPage(
+                child: FriendsView(),
+              ),
+            ),
+            GoRoute(
+              path: ProfileView.routeName,
+              pageBuilder: (context, state) => const NoTransitionPage(
+                child: ProfileView(),
+              ),
+            ),
+            GoRoute(
+              path: OtherProfileView.routeName,
+              pageBuilder: (context, state) {
+                final id = state.pathParameters['id'];
+                Widget child;
+                if (id == null) {
+                  child = const PageNotFoundView();
+                } else if (id == loggedInUser!.id) {
+                  child = const ProfileView();
+                } else {
+                  child = OtherProfileView(id: id);
+                }
+                return NoTransitionPage(child: child);
+              },
+            ),
+          ],
+        ),
+      ],
+    );
+  }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return SafeArea(
       child: ListenableBuilder(
         listenable: settingsController,
@@ -103,7 +106,7 @@ class TILApp extends StatelessWidget {
           ),
           darkTheme: ThemeData.dark(),
           themeMode: settingsController.themeMode,
-          routerConfig: _router,
+          routerConfig: _createRouter(ref),
         ),
       ),
     );

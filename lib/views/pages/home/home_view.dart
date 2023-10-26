@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:developer' as developer;
 
 import 'package:til/data/post_db.dart';
@@ -6,16 +7,26 @@ import 'package:til/data/user_db.dart';
 import 'package:til/settings/sign_in.dart';
 import 'package:til/views/components/feed_post.dart';
 
-class HomeView extends StatefulWidget {
+class HomeView extends ConsumerStatefulWidget {
   const HomeView({super.key});
 
   static const routeName = '/home';
 
   @override
-  State<HomeView> createState() => _HomeViewState();
+  ConsumerState<HomeView> createState() => _HomeViewState();
 }
 
-class _HomeViewState extends State<HomeView> {
+class _HomeViewState extends ConsumerState<HomeView> {
+  UserDB? userDB;
+  User? loggedInUser;
+
+  @override
+  void initState() {
+    super.initState();
+    userDB = ref.watch(userDBProvider);
+    loggedInUser = ref.watch(loggedInUserProvider);
+  }
+
   // https://stackoverflow.com/questions/72315755/close-an-expansiontile-when-another-expansiontile-is-tapped
   int selectedTile = 0;
   int sectionCount = 3;
@@ -25,10 +36,11 @@ class _HomeViewState extends State<HomeView> {
   }
 
   List<Widget> widgetsFromOrganization() {
+    if (userDB == null) return [];
     return postDB
         .getAll()
         .where((e) {
-          var poster = userDB.getById(e.userId);
+          var poster = userDB!.getById(e.userId);
           return loggedInUser!.organizationId == poster.organizationId;
         })
         .map((e) => FeedPost(post: e))
@@ -36,10 +48,11 @@ class _HomeViewState extends State<HomeView> {
   }
 
   List<Widget> widgetsFromFriends() {
+    if (userDB == null) return [];
     return postDB
         .getAll()
         .where((e) {
-          var poster = userDB.getById(e.userId);
+          var poster = userDB!.getById(e.userId);
           return loggedInUser!.friendIds.contains(poster.id);
         })
         .map((e) => FeedPost(post: e))

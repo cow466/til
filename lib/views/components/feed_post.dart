@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:til/data/post_db.dart';
 import 'package:til/data/user_db.dart';
 import 'package:til/helpers/time_format.dart';
 import 'package:til/views/pages/other_profile/other_profile_view.dart';
 
-class FeedPost extends StatelessWidget {
+class FeedPost extends ConsumerWidget {
   const FeedPost({
     super.key,
     required this.post,
@@ -14,8 +15,8 @@ class FeedPost extends StatelessWidget {
   final Post post;
 
   @override
-  Widget build(BuildContext context) {
-    final poster = userDB.getById(post.userId);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final poster = ref.watch(userDBProvider).getById(post.userId);
 
     return Container(
       padding: const EdgeInsets.all(12),

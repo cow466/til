@@ -1,21 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:til/data/organization_db.dart';
 import 'package:til/data/post_db.dart';
+import 'package:til/data/user_db.dart';
 import 'dart:developer' as developer;
 
 import 'package:til/settings/sign_in.dart';
 import 'package:til/views/components/feed_post.dart';
 
-class ProfileView extends StatefulWidget {
+class ProfileView extends ConsumerStatefulWidget {
   const ProfileView({super.key});
 
   static const routeName = '/profile';
 
   @override
-  State<ProfileView> createState() => _ProfileViewState();
+  ConsumerState<ProfileView> createState() => _ProfileViewState();
 }
 
-class _ProfileViewState extends State<ProfileView> {
+class _ProfileViewState extends ConsumerState<ProfileView> {
+  User? loggedInUser;
+
+  @override
+  void initState() {
+    super.initState();
+    loggedInUser = ref.watch(loggedInUserProvider);
+  }
+
   final headerStyle = const TextStyle(
     fontSize: 18,
     fontWeight: FontWeight.bold,
