@@ -11,7 +11,7 @@ class FriendsView extends StatelessWidget {
       padding: const EdgeInsetsDirectional.symmetric(horizontal: 20),
       child: Column(
         children: [
-          const Text("Friends"),
+          const Text('Friends'),
           SizedBox(
             height: 300,
             child: ListView(
@@ -19,7 +19,7 @@ class FriendsView extends StatelessWidget {
               children: [
                 ...[1, 2, 3, 4, 5].map((e) {
                   return const Text(
-                    "1",
+                    '1',
                     style: TextStyle(
                       backgroundColor: Colors.red,
                     ),

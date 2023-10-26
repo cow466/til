@@ -1,6 +1,7 @@
 import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:til/data/friend_request_db.dart';
 import 'package:til/data/organization_db.dart';
@@ -10,21 +11,33 @@ import 'package:til/settings/sign_in.dart';
 
 import 'package:til/views/components/feed_post.dart';
 
-class OtherProfileView extends StatefulWidget {
+class OtherProfileView extends ConsumerStatefulWidget {
   const OtherProfileView({
     super.key,
-    required this.user,
+    required this.id,
   });
 
   static const routeName = '/other-profile/:id';
 
-  final User user;
+  final String id;
 
   @override
-  State<OtherProfileView> createState() => _OtherProfileViewState();
+  ConsumerState<OtherProfileView> createState() => _OtherProfileViewState();
 }
 
-class _OtherProfileViewState extends State<OtherProfileView> {
+class _OtherProfileViewState extends ConsumerState<OtherProfileView> {
+  late User user;
+  late User loggedInUser;
+  late PostDB postDB;
+
+  @override
+  void initState() {
+    super.initState();
+    user = ref.read(userDBProvider).getById(widget.id);
+    loggedInUser = ref.read(loggedInUserNotifierProvider)!;
+    postDB = ref.read(postDBProvider);
+  }
+
   final headerStyle = const TextStyle(
     fontSize: 18,
     fontWeight: FontWeight.bold,
@@ -74,15 +87,15 @@ class _OtherProfileViewState extends State<OtherProfileView> {
       );
     }
 
-    var name = widget.user.name;
-    var organization = organizationDB.getById(widget.user.organizationId).name;
-    var email = widget.user.email;
+    var name = user.name;
+    var organization = organizationDB.getById(user.organizationId).name;
+    var email = user.email;
 
     return Row(
       children: [
         CircleAvatar(
           minRadius: 75,
-          backgroundImage: AssetImage('assets/images/${widget.user.imagePath}'),
+          backgroundImage: AssetImage('assets/images/${user.imagePath}'),
         ),
         const SizedBox(
           width: 20,
@@ -109,7 +122,7 @@ class _OtherProfileViewState extends State<OtherProfileView> {
   }
 
   Widget createAboutMeSection() {
-    var aboutMe = widget.user.aboutMe;
+    var aboutMe = user.aboutMe;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -126,7 +139,7 @@ class _OtherProfileViewState extends State<OtherProfileView> {
   }
 
   Widget createThingsYouLearnedSection() {
-    var thingsLearned = postDB.getUserPosts(widget.user.id);
+    var thingsLearned = postDB.getUserPosts(user.id);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -151,24 +164,22 @@ class _OtherProfileViewState extends State<OtherProfileView> {
 
   Widget createSendFriendRequestButton(BuildContext context) {
     void handleSendFriendRequest() {
-      final success =
-          friendRequestDB.sendFromTo(loggedInUser!.id, widget.user.id);
+      final success = friendRequestDB.sendFromTo(loggedInUser.id, user.id);
       if (success) {
         developer.log(
-            'Send friend request from ${loggedInUser!.name} to ${widget.user.name}: success');
-        context
-            .go(OtherProfileView.routeName.replaceFirst(':id', widget.user.id));
+            'Send friend request from ${loggedInUser.name} to ${user.name}: success');
+        context.go(OtherProfileView.routeName.replaceFirst(':id', user.id));
       } else {
         developer.log(
-            'Send friend request from ${loggedInUser!.name} to ${widget.user.name}: failed');
+            'Send friend request from ${loggedInUser.name} to ${user.name}: failed');
       }
     }
 
     bool friendRequestAlreadySent = false;
 
     if (friendRequestDB
-        .getFromUser(loggedInUser!.id)
-        .any((fr) => fr.to == widget.user.id)) {
+        .getFromUser(loggedInUser.id)
+        .any((fr) => fr.to == user.id)) {
       friendRequestAlreadySent = true;
     }
     return Positioned.fill(
@@ -252,6 +263,10 @@ class _OtherProfileViewState extends State<OtherProfileView> {
 
   @override
   Widget build(BuildContext context) {
+    user = ref.watch(userDBProvider).getById(widget.id);
+    loggedInUser = ref.watch(loggedInUserNotifierProvider)!;
+    postDB = ref.watch(postDBProvider);
+
     return Container(
       padding: const EdgeInsets.all(20),
       child: Stack(

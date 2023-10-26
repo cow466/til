@@ -1,21 +1,55 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:til/data/post_db.dart';
+import 'package:til/data/user_db.dart';
+import 'package:til/settings/sign_in.dart';
+import 'package:til/views/pages/home/home_view.dart';
 
-class NewPostView extends StatefulWidget {
+class NewPostView extends ConsumerStatefulWidget {
   const NewPostView({super.key});
 
   static const routeName = '/new-post';
 
   @override
-  State<NewPostView> createState() => _NewPostViewState();
+  ConsumerState<NewPostView> createState() => _NewPostViewState();
 }
 
-class _NewPostViewState extends State<NewPostView> {
+class _NewPostViewState extends ConsumerState<NewPostView> {
+  late TextEditingController _controller;
+  late PostDB postDB;
+  late User loggedInUser;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController();
+    postDB = ref.read(postDBProvider);
+    loggedInUser = ref.read(loggedInUserNotifierProvider)!;
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   // https://stackoverflow.com/questions/72315755/close-an-expansiontile-when-another-expansiontile-is-tapped
   int selectedTile = -1;
   int sectionCount = 3;
 
+  void handleCreateNewPost(content) {
+    postDB.addPost(
+      userId: loggedInUser.id,
+      content: content,
+    );
+    context.go(HomeView.routeName);
+  }
+
   @override
   Widget build(BuildContext context) {
+    postDB = ref.watch(postDBProvider);
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -32,10 +66,14 @@ class _NewPostViewState extends State<NewPostView> {
             horizontal: 48,
             vertical: 16,
           ),
-          child: const TextField(
+          child: TextField(
+            controller: _controller,
+            onSubmitted: (String value) async {
+              handleCreateNewPost(value);
+            },
             minLines: 5,
             maxLines: 5,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.all(Radius.zero),
               ),
@@ -49,7 +87,9 @@ class _NewPostViewState extends State<NewPostView> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                _controller.text = '';
+              },
               style: TextButton.styleFrom(
                 backgroundColor: Colors.red,
                 shape: RoundedRectangleBorder(
@@ -71,7 +111,9 @@ class _NewPostViewState extends State<NewPostView> {
               width: 36,
             ),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                handleCreateNewPost(_controller.text);
+              },
               style: TextButton.styleFrom(
                 backgroundColor: Colors.green,
                 shape: RoundedRectangleBorder(

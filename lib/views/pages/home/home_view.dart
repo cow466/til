@@ -1,21 +1,33 @@
 import 'package:flutter/material.dart';
-import 'dart:developer' as developer;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:til/data/post_db.dart';
 import 'package:til/data/user_db.dart';
 import 'package:til/settings/sign_in.dart';
 import 'package:til/views/components/feed_post.dart';
 
-class HomeView extends StatefulWidget {
+class HomeView extends ConsumerStatefulWidget {
   const HomeView({super.key});
 
   static const routeName = '/home';
 
   @override
-  State<HomeView> createState() => _HomeViewState();
+  ConsumerState<HomeView> createState() => _HomeViewState();
 }
 
-class _HomeViewState extends State<HomeView> {
+class _HomeViewState extends ConsumerState<HomeView> {
+  late UserDB userDB;
+  late PostDB postDB;
+  late User loggedInUser;
+
+  @override
+  void initState() {
+    super.initState();
+    userDB = ref.read(userDBProvider);
+    postDB = ref.read(postDBProvider);
+    loggedInUser = ref.read(loggedInUserNotifierProvider)!;
+  }
+
   // https://stackoverflow.com/questions/72315755/close-an-expansiontile-when-another-expansiontile-is-tapped
   int selectedTile = 0;
   int sectionCount = 3;
@@ -29,7 +41,7 @@ class _HomeViewState extends State<HomeView> {
         .getAll()
         .where((e) {
           var poster = userDB.getById(e.userId);
-          return loggedInUser!.organizationId == poster.organizationId;
+          return loggedInUser.organizationId == poster.organizationId;
         })
         .map((e) => FeedPost(post: e))
         .toList();
@@ -40,7 +52,7 @@ class _HomeViewState extends State<HomeView> {
         .getAll()
         .where((e) {
           var poster = userDB.getById(e.userId);
-          return loggedInUser!.friendIds.contains(poster.id);
+          return loggedInUser.friendIds.contains(poster.id);
         })
         .map((e) => FeedPost(post: e))
         .toList();
@@ -64,6 +76,10 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
+    userDB = ref.watch(userDBProvider);
+    postDB = ref.watch(postDBProvider);
+    loggedInUser = ref.watch(loggedInUserNotifierProvider)!;
+
     return ListView.builder(
       key: Key(selectedTile.toString()),
       itemCount: sectionCount,

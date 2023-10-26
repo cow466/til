@@ -1,3 +1,7 @@
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part 'user_db.g.dart';
+
 class User {
   User({
     required this.id,
@@ -29,6 +33,9 @@ enum Role {
 }
 
 class UserDB {
+  UserDB(this.ref);
+
+  final ProviderRef<UserDB> ref;
   final List<User> _users = [
     User(
       id: '0',
@@ -72,6 +79,17 @@ class UserDB {
   List<User> getUsers(List<String> userIDs) {
     return _users.where((user) => userIDs.contains(user.id)).toList();
   }
+
+  bool isUserEmail(String email) {
+    return _users.any((user) => user.email == email);
+  }
+
+  User signInAs(String email) {
+    return _users.firstWhere((user) => user.email == email);
+  }
 }
 
-UserDB userDB = UserDB();
+@riverpod
+UserDB userDB(UserDBRef ref) {
+  return UserDB(ref);
+}

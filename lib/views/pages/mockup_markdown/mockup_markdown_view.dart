@@ -15,7 +15,7 @@ class MockupMarkdownView extends StatelessWidget {
     return Markdown(
       data: data,
       onTapLink: (text, href, title) {
-        launchUrl(Uri.parse(href ?? ""));
+        launchUrl(Uri.parse(href ?? ''));
       },
     );
   }

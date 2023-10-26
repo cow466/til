@@ -1,3 +1,8 @@
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:shortid/shortid.dart';
+
+part 'post_db.g.dart';
+
 class Post {
   Post({
     required this.id,
@@ -13,6 +18,9 @@ class Post {
 }
 
 class PostDB {
+  // PostDB(this.ref);
+
+  // final ProviderRef<PostDB> ref;
   final List<Post> _posts = [
     Post(
       id: '0',
@@ -45,6 +53,21 @@ class PostDB {
   List<Post> getUserPosts(String userId) {
     return getAll().where((post) => post.userId == userId).toList();
   }
+
+  bool addPost({required String userId, required String content}) {
+    _posts.add(Post(
+      id: shortid.generate(),
+      userId: userId,
+      content: content,
+      postedAt: DateTime.now(),
+    ));
+    return true;
+  }
 }
 
-PostDB postDB = PostDB();
+PostDB _singleton = PostDB();
+
+@riverpod
+PostDB postDB(PostDBRef ref) {
+  return _singleton;
+}
