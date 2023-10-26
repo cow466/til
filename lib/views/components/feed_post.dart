@@ -74,11 +74,26 @@ class FeedPost extends ConsumerWidget {
               const SizedBox(
                 height: 6,
               ),
-              Text(
-                post.content,
-                style: const TextStyle(
-                  fontSize: 14,
-                ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const Text(
+                    'TIL',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 6.0,
+                  ),
+                  Text(
+                    post.content,
+                    style: const TextStyle(
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
               ),
             ],
           )

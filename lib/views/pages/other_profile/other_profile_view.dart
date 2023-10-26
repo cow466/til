@@ -26,13 +26,16 @@ class OtherProfileView extends ConsumerStatefulWidget {
 }
 
 class _OtherProfileViewState extends ConsumerState<OtherProfileView> {
-  User? user;
-  User? loggedInUser;
+  late User user;
+  late User loggedInUser;
+  late PostDB postDB;
+
   @override
   void initState() {
     super.initState();
-    user = ref.watch(userDBProvider).getById(widget.id);
-    loggedInUser = ref.watch(loggedInUserProvider);
+    user = ref.read(userDBProvider).getById(widget.id);
+    loggedInUser = ref.read(loggedInUserNotifierProvider)!;
+    postDB = ref.read(postDBProvider);
   }
 
   final headerStyle = const TextStyle(
@@ -84,15 +87,15 @@ class _OtherProfileViewState extends ConsumerState<OtherProfileView> {
       );
     }
 
-    var name = user!.name;
-    var organization = organizationDB.getById(user!.organizationId).name;
-    var email = user!.email;
+    var name = user.name;
+    var organization = organizationDB.getById(user.organizationId).name;
+    var email = user.email;
 
     return Row(
       children: [
         CircleAvatar(
           minRadius: 75,
-          backgroundImage: AssetImage('assets/images/${user!.imagePath}'),
+          backgroundImage: AssetImage('assets/images/${user.imagePath}'),
         ),
         const SizedBox(
           width: 20,
@@ -119,7 +122,7 @@ class _OtherProfileViewState extends ConsumerState<OtherProfileView> {
   }
 
   Widget createAboutMeSection() {
-    var aboutMe = user!.aboutMe;
+    var aboutMe = user.aboutMe;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -136,7 +139,7 @@ class _OtherProfileViewState extends ConsumerState<OtherProfileView> {
   }
 
   Widget createThingsYouLearnedSection() {
-    var thingsLearned = postDB.getUserPosts(user!.id);
+    var thingsLearned = postDB.getUserPosts(user.id);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -161,22 +164,22 @@ class _OtherProfileViewState extends ConsumerState<OtherProfileView> {
 
   Widget createSendFriendRequestButton(BuildContext context) {
     void handleSendFriendRequest() {
-      final success = friendRequestDB.sendFromTo(loggedInUser!.id, user!.id);
+      final success = friendRequestDB.sendFromTo(loggedInUser.id, user.id);
       if (success) {
         developer.log(
-            'Send friend request from ${loggedInUser!.name} to ${user!.name}: success');
-        context.go(OtherProfileView.routeName.replaceFirst(':id', user!.id));
+            'Send friend request from ${loggedInUser.name} to ${user.name}: success');
+        context.go(OtherProfileView.routeName.replaceFirst(':id', user.id));
       } else {
         developer.log(
-            'Send friend request from ${loggedInUser!.name} to ${user!.name}: failed');
+            'Send friend request from ${loggedInUser.name} to ${user.name}: failed');
       }
     }
 
     bool friendRequestAlreadySent = false;
 
     if (friendRequestDB
-        .getFromUser(loggedInUser!.id)
-        .any((fr) => fr.to == user!.id)) {
+        .getFromUser(loggedInUser.id)
+        .any((fr) => fr.to == user.id)) {
       friendRequestAlreadySent = true;
     }
     return Positioned.fill(
@@ -260,6 +263,10 @@ class _OtherProfileViewState extends ConsumerState<OtherProfileView> {
 
   @override
   Widget build(BuildContext context) {
+    user = ref.watch(userDBProvider).getById(widget.id);
+    loggedInUser = ref.watch(loggedInUserNotifierProvider)!;
+    postDB = ref.watch(postDBProvider);
+
     return Container(
       padding: const EdgeInsets.all(20),
       child: Stack(

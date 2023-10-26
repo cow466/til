@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:til/data/organization_db.dart';
 import 'package:til/data/post_db.dart';
 import 'package:til/data/user_db.dart';
-import 'dart:developer' as developer;
 
 import 'package:til/settings/sign_in.dart';
 import 'package:til/views/components/feed_post.dart';
@@ -18,12 +17,14 @@ class ProfileView extends ConsumerStatefulWidget {
 }
 
 class _ProfileViewState extends ConsumerState<ProfileView> {
-  User? loggedInUser;
+  late User loggedInUser;
+  late PostDB postDB;
 
   @override
   void initState() {
     super.initState();
-    loggedInUser = ref.watch(loggedInUserProvider);
+    loggedInUser = ref.read(loggedInUserNotifierProvider)!;
+    postDB = ref.read(postDBProvider);
   }
 
   final headerStyle = const TextStyle(
@@ -75,17 +76,16 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
       );
     }
 
-    var name = loggedInUser!.name;
-    var organization =
-        organizationDB.getById(loggedInUser!.organizationId).name;
-    var email = loggedInUser!.email;
+    var name = loggedInUser.name;
+    var organization = organizationDB.getById(loggedInUser.organizationId).name;
+    var email = loggedInUser.email;
 
     return Row(
       children: [
         CircleAvatar(
           minRadius: 75,
           backgroundImage:
-              AssetImage('assets/images/${loggedInUser!.imagePath}'),
+              AssetImage('assets/images/${loggedInUser.imagePath}'),
         ),
         const SizedBox(
           width: 20,
@@ -112,7 +112,7 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
   }
 
   Widget createAboutMeSection() {
-    var aboutMe = loggedInUser!.aboutMe;
+    var aboutMe = loggedInUser.aboutMe;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -129,7 +129,7 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
   }
 
   Widget createThingsYouLearnedSection() {
-    var thingsLearned = postDB.getUserPosts(loggedInUser!.id);
+    var thingsLearned = postDB.getUserPosts(loggedInUser.id);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -154,6 +154,9 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
 
   @override
   Widget build(BuildContext context) {
+    loggedInUser = ref.watch(loggedInUserNotifierProvider)!;
+    postDB = ref.watch(postDBProvider);
+
     return Container(
       padding: const EdgeInsets.all(20),
       child: ListView(

@@ -1,4 +1,6 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part 'user_db.g.dart';
 
 class User {
   User({
@@ -87,6 +89,7 @@ class UserDB {
   }
 }
 
-final userDBProvider = Provider<UserDB>((ref) {
+@riverpod
+UserDB userDB(UserDBRef ref) {
   return UserDB(ref);
-});
+}
