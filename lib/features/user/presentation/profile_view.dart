@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../organization/domain/organization_db.dart';
 import '../../organization/data/organization_db_provider.dart';
 import '../../posts/domain/post_db.dart';
-import '../../posts//data/post_db_provider.dart';
+import '../../posts/data/post_db_provider.dart';
 import '../domain/user_db.dart';
 import '../../authentication/data/logged_in_user_provider.dart';
 import '../../posts/presentation/feed_post.dart';
