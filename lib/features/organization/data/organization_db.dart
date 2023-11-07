@@ -1,22 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-
-class Organization {
-  Organization({
-    required this.id,
-    required this.name,
-    this.email = '',
-    this.website = '',
-    this.address = '',
-    required this.members,
-  });
-
-  String id;
-  String name;
-  String email;
-  String website;
-  String address;
-  List<String> members;
-}
+import '../domain/organization.dart';
 
 class OrganizationDB {
   OrganizationDB(this.ref);

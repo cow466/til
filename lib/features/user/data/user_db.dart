@@ -1,35 +1,6 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shortid/shortid.dart';
-
-class User {
-  User({
-    required this.id,
-    required this.name,
-    required this.organizationId,
-    required this.email,
-    required this.aboutMe,
-    required this.isVerified,
-    required this.imagePath,
-    required this.role,
-    required this.friendIds,
-  });
-
-  String id;
-  String name;
-  String organizationId;
-  String email;
-  String aboutMe;
-  bool isVerified;
-  String imagePath;
-  Role role;
-  List<String> friendIds;
-}
-
-enum Role {
-  user,
-  organization,
-  admin,
-}
+import '../domain/user.dart';
 
 class UserDB {
   UserDB(this.ref);

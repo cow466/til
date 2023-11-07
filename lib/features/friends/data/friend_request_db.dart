@@ -1,19 +1,6 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shortid/shortid.dart';
-
-class FriendRequest {
-  FriendRequest({
-    required this.id,
-    required this.from,
-    required this.to,
-    required this.sentAt,
-  });
-
-  String id;
-  String from;
-  String to;
-  DateTime sentAt;
-}
+import '../domain/friend_request.dart';
 
 class FriendRequestDB {
   FriendRequestDB(this.ref);

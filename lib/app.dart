@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:til/features/user/domain/user_db.dart';
+import 'package:til/features/user/domain/user.dart';
 import 'package:til/features/settings/data/settings.dart';
 import 'package:til/features/authentication/data/logged_in_user_provider.dart';
 import 'package:til/features/common/layouts/limited_layout.dart';

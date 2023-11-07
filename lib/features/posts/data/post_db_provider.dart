@@ -1,5 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import '../domain/post_db.dart';
+import 'post_db.dart';
 
 part 'post_db_provider.g.dart';
 

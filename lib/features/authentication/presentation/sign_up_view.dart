@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../user/domain/user_db.dart';
+import '../../user/data/user_db.dart';
 import '../../user/data/user_db_provider.dart';
 import '../../authentication/data/logged_in_user_provider.dart';
 

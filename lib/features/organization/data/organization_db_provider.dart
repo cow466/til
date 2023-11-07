@@ -1,5 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import '../domain/organization_db.dart';
+import 'organization_db.dart';
 
 part 'organization_db_provider.g.dart';
 

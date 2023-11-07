@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../domain/post_db.dart';
+import '../data/post_db.dart';
 import '../data/post_db_provider.dart';
-import '../../user/domain/user_db.dart';
+import '../../user/domain/user.dart';
 import '../../authentication/data/logged_in_user_provider.dart';
 import '../../posts/presentation/home_view.dart';
 

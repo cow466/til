@@ -1,16 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-
-class UserReport {
-  UserReport({
-    required this.id,
-    required this.userId,
-    required this.reason,
-  });
-
-  String id;
-  String userId;
-  String reason;
-}
+import '../domain/user_report.dart';
 
 class UserReportDB {
   UserReportDB(this.ref);

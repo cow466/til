@@ -3,13 +3,13 @@ import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../friends/domain/friend_request_db.dart';
+import '../../friends/data/friend_request_db.dart';
 import '../../friends/data/friend_request_db_provider.dart';
-import '../../organization/domain/organization_db.dart';
+import '../../organization/data/organization_db.dart';
 import '../../organization/data/organization_db_provider.dart';
-import '../../posts/domain/post_db.dart';
+import '../../posts/data/post_db.dart';
 import '../../posts/data/post_db_provider.dart';
-import '../domain/user_db.dart';
+import '../domain/user.dart';
 import '../data/user_db_provider.dart';
 import '../../authentication/data/logged_in_user_provider.dart';
 

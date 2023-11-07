@@ -1,19 +1,6 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shortid/shortid.dart';
-
-class Post {
-  Post({
-    required this.id,
-    required this.userId,
-    required this.content,
-    required this.postedAt,
-  });
-
-  String id;
-  String userId;
-  String content;
-  DateTime postedAt;
-}
+import '../domain/post.dart';
 
 class PostDB {
   PostDB(this.ref);

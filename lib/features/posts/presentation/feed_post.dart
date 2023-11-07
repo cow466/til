@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../domain/post_db.dart';
+import '../domain/post.dart';
 import '../../user/data/user_db_provider.dart';
 import '../../common/time_format.dart';
 import '../../user/presentation/other_profile_view.dart';
