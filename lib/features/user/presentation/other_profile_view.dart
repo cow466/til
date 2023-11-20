@@ -3,6 +3,7 @@ import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:til/features/posts/domain/post.dart';
 import '../../friends/data/friend_request_db.dart';
 import '../../friends/data/friend_request_db_provider.dart';
 import '../../organization/data/organization_db.dart';
@@ -148,10 +149,11 @@ class _OtherProfileViewState extends ConsumerState<OtherProfileView> {
     return const CircularProgressIndicator();
   }
 
-  Widget createThingsYouLearnedSection(User? user) {
+  Widget createThingsYouLearnedSection(
+    User? user,
+    List<Post> thingsLearned,
+  ) {
     if (user != null) {
-      var thingsLearned = postDB.getUserPosts(user.id);
-
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -176,7 +178,10 @@ class _OtherProfileViewState extends ConsumerState<OtherProfileView> {
   }
 
   Widget createSendFriendRequestButton(
-      BuildContext context, User? user, User? loggedInUser) {
+    BuildContext context,
+    User? user,
+    User? loggedInUser,
+  ) {
     if (user == null || loggedInUser == null) {
       return const CircularProgressIndicator();
     }
@@ -289,32 +294,47 @@ class _OtherProfileViewState extends ConsumerState<OtherProfileView> {
       AsyncData(:final value) => Container(
           padding: const EdgeInsets.all(20),
           child: FutureBuilder(
-            future: Future.wait([userFuture]),
+            future: userFuture,
             builder: (context, snapshot) {
-              if (snapshot.hasData &&
-                  snapshot.connectionState == ConnectionState.done) {
-                var user = snapshot.data![0];
-                return Stack(
-                  children: [
-                    ListView(
-                      shrinkWrap: true,
-                      children: [
-                        createHeaderSection(user),
-                        const SizedBox(
-                          height: 32,
-                        ),
-                        createAboutMeSection(user),
-                        const SizedBox(
-                          height: 32,
-                        ),
-                        createThingsYouLearnedSection(user),
-                      ],
-                    ),
-                    createSendFriendRequestButton(context, user, value),
-                  ],
-                );
+              if (!snapshot.hasData ||
+                  snapshot.connectionState != ConnectionState.done) {
+                return const CircularProgressIndicator();
               }
-              return const CircularProgressIndicator();
+              final user = snapshot.data!;
+              final thingsLearnedFuture =
+                  ref.watch(postDBProvider).getUserPosts(user.id);
+              return FutureBuilder(
+                future: thingsLearnedFuture,
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData ||
+                      snapshot.connectionState != ConnectionState.done) {
+                    return const CircularProgressIndicator();
+                  }
+                  final thingsLearned = snapshot.data!;
+                  return Stack(
+                    children: [
+                      ListView(
+                        shrinkWrap: true,
+                        children: [
+                          createHeaderSection(user),
+                          const SizedBox(
+                            height: 32,
+                          ),
+                          createAboutMeSection(user),
+                          const SizedBox(
+                            height: 32,
+                          ),
+                          createThingsYouLearnedSection(
+                            user,
+                            thingsLearned,
+                          ),
+                        ],
+                      ),
+                      createSendFriendRequestButton(context, user, value),
+                    ],
+                  );
+                },
+              );
             },
           ),
         ),

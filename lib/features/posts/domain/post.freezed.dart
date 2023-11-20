@@ -20,7 +20,6 @@ Post _$PostFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$Post {
-  String get id => throw _privateConstructorUsedError;
   String get userId => throw _privateConstructorUsedError;
   String get content => throw _privateConstructorUsedError;
   DateTime get postedAt => throw _privateConstructorUsedError;
@@ -35,7 +34,7 @@ abstract class $PostCopyWith<$Res> {
   factory $PostCopyWith(Post value, $Res Function(Post) then) =
       _$PostCopyWithImpl<$Res, Post>;
   @useResult
-  $Res call({String id, String userId, String content, DateTime postedAt});
+  $Res call({String userId, String content, DateTime postedAt});
 }
 
 /// @nodoc
@@ -51,16 +50,11 @@ class _$PostCopyWithImpl<$Res, $Val extends Post>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
     Object? userId = null,
     Object? content = null,
     Object? postedAt = null,
   }) {
     return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
       userId: null == userId
           ? _value.userId
           : userId // ignore: cast_nullable_to_non_nullable
@@ -84,7 +78,7 @@ abstract class _$$PostImplCopyWith<$Res> implements $PostCopyWith<$Res> {
       __$$PostImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String id, String userId, String content, DateTime postedAt});
+  $Res call({String userId, String content, DateTime postedAt});
 }
 
 /// @nodoc
@@ -97,16 +91,11 @@ class __$$PostImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
     Object? userId = null,
     Object? content = null,
     Object? postedAt = null,
   }) {
     return _then(_$PostImpl(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
       userId: null == userId
           ? _value.userId
           : userId // ignore: cast_nullable_to_non_nullable
@@ -127,16 +116,11 @@ class __$$PostImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$PostImpl with DiagnosticableTreeMixin implements _Post {
   _$PostImpl(
-      {required this.id,
-      required this.userId,
-      required this.content,
-      required this.postedAt});
+      {required this.userId, required this.content, required this.postedAt});
 
   factory _$PostImpl.fromJson(Map<String, dynamic> json) =>
       _$$PostImplFromJson(json);
 
-  @override
-  final String id;
   @override
   final String userId;
   @override
@@ -146,7 +130,7 @@ class _$PostImpl with DiagnosticableTreeMixin implements _Post {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'Post(id: $id, userId: $userId, content: $content, postedAt: $postedAt)';
+    return 'Post(userId: $userId, content: $content, postedAt: $postedAt)';
   }
 
   @override
@@ -154,7 +138,6 @@ class _$PostImpl with DiagnosticableTreeMixin implements _Post {
     super.debugFillProperties(properties);
     properties
       ..add(DiagnosticsProperty('type', 'Post'))
-      ..add(DiagnosticsProperty('id', id))
       ..add(DiagnosticsProperty('userId', userId))
       ..add(DiagnosticsProperty('content', content))
       ..add(DiagnosticsProperty('postedAt', postedAt));
@@ -165,7 +148,6 @@ class _$PostImpl with DiagnosticableTreeMixin implements _Post {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$PostImpl &&
-            (identical(other.id, id) || other.id == id) &&
             (identical(other.userId, userId) || other.userId == userId) &&
             (identical(other.content, content) || other.content == content) &&
             (identical(other.postedAt, postedAt) ||
@@ -174,7 +156,7 @@ class _$PostImpl with DiagnosticableTreeMixin implements _Post {
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id, userId, content, postedAt);
+  int get hashCode => Object.hash(runtimeType, userId, content, postedAt);
 
   @JsonKey(ignore: true)
   @override
@@ -192,15 +174,12 @@ class _$PostImpl with DiagnosticableTreeMixin implements _Post {
 
 abstract class _Post implements Post {
   factory _Post(
-      {required final String id,
-      required final String userId,
+      {required final String userId,
       required final String content,
       required final DateTime postedAt}) = _$PostImpl;
 
   factory _Post.fromJson(Map<String, dynamic> json) = _$PostImpl.fromJson;
 
-  @override
-  String get id;
   @override
   String get userId;
   @override

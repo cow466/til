@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:til/features/authentication/data/auth_controller_provider.dart';
 import 'package:til/features/authentication/data/firebase_auth_provider.dart';
 import 'package:til/features/posts/presentation/home_view.dart';
 import '../../user/data/user_db.dart';
@@ -63,12 +64,15 @@ class SignUpViewState extends ConsumerState<CreateAccountView> {
         const SizedBox(height: 12.0),
         ElevatedButton(
           onPressed: () {
-            signInAs(
-              name: _nameController.text,
-              email: ref.watch(firebaseAuthProvider).currentUser!.email!,
-              aboutMe: _aboutMeController.text,
-              ref: ref,
-            ).then((_) {
+            ref
+                .read(authControllerProvider.notifier)
+                .signInAs(
+                  name: _nameController.text,
+                  email: ref.watch(firebaseAuthProvider).currentUser!.email!,
+                  aboutMe: _aboutMeController.text,
+                  ref: ref,
+                )
+                .then((_) {
               context.go(HomeView.routeName);
             });
           },

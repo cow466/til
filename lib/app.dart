@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:til/features/loading/presentation/loading_view.dart';
 import 'package:til/features/routing/router.dart';
 import 'package:til/features/settings/data/settings_provider.dart';
 
@@ -16,7 +17,7 @@ class TILApp extends ConsumerWidget {
     if (asyncSettings is AsyncError) {
       throw Exception('asyncSettings error: ${asyncSettings.error}');
     } else if (asyncSettings is AsyncLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return const LoadingView();
     }
     final settings = asyncSettings.asData!.value;
     final goRouter = ref.watch(goRouterProvider);

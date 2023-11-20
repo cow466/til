@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:til/features/authentication/data/firebase_auth_provider.dart';
+import 'package:til/features/loading/presentation/loading_view.dart';
 import '../data/settings_provider.dart';
 
 class SettingsView extends ConsumerWidget {
@@ -34,7 +35,7 @@ class SettingsView extends ConsumerWidget {
           ],
         ),
       AsyncError(:final error) => Text('Error: $error'),
-      _ => const Center(child: CircularProgressIndicator()),
+      _ => const LoadingView(),
     };
   }
 }

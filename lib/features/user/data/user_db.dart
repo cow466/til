@@ -1,6 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:til/features/crud_collection.dart';
-// import 'package:shortid/shortid.dart';
 import '../domain/user.dart';
 
 final class UserDB extends CrudCollection<User> {

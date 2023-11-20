@@ -1,6 +1,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:til/features/authentication/data/auth_controller_provider.dart';
+import 'package:til/features/authentication/data/logged_in_user_provider.dart';
 import '../authentication/data/firebase_auth_provider.dart';
 import '../authentication/presentation/create_account_view.dart';
 import '../authentication/presentation/sign_in_view.dart';
@@ -23,12 +25,17 @@ GoRouter goRouter(GoRouterRef ref) {
   final mainShellNavigatorKey = GlobalKey<NavigatorState>();
   final limitedShellNavigatorKey = GlobalKey<NavigatorState>();
 
-  final authStateStream = ref.watch(authStateChangesProvider).valueOrNull;
-  final isLoggedIn = authStateStream != null;
+  ref.watch(authControllerProvider);
+  final authUser = ref.watch(authStateChangesProvider).valueOrNull;
+  final isLoggedIn = authUser != null;
+  final loggedInUser = ref.watch(loggedInUserProvider).valueOrNull;
+  final hasUserData = loggedInUser != null;
 
   String initialLocation;
   if (!isLoggedIn) {
     initialLocation = LimitedPageLayout.routeName + SignInView.routeName;
+  } else if (!hasUserData) {
+    initialLocation = LimitedPageLayout.routeName + CreateAccountView.routeName;
   } else {
     initialLocation = HomeView.routeName;
   }

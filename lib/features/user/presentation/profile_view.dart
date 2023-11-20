@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:til/features/loading/presentation/loading_view.dart';
+import 'package:til/features/posts/domain/post.dart';
 
 import '../../organization/data/organization_db.dart';
 import '../../organization/data/organization_db_provider.dart';
@@ -19,13 +21,11 @@ class ProfileView extends ConsumerStatefulWidget {
 }
 
 class _ProfileViewState extends ConsumerState<ProfileView> {
-  late PostDB postDB;
   late OrganizationDB organizationDB;
 
   @override
   void initState() {
     super.initState();
-    postDB = ref.read(postDBProvider);
     organizationDB = ref.read(organizationDBProvider);
   }
 
@@ -130,9 +130,10 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
     );
   }
 
-  Widget createThingsYouLearnedSection(User loggedInUser) {
-    var thingsLearned = postDB.getUserPosts(loggedInUser.id);
-
+  Widget createThingsYouLearnedSection(
+    User loggedInUser,
+    List<Post> thingsLearned,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -156,29 +157,45 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
 
   @override
   Widget build(BuildContext context) {
-    final loggedInUser = ref.watch(loggedInUserProvider);
-    postDB = ref.watch(postDBProvider);
+    final loggedInUserAsync = ref.watch(loggedInUserProvider);
 
-    if (loggedInUser is AsyncData) {
-      return Container(
-        padding: const EdgeInsets.all(20),
-        child: ListView(
-          shrinkWrap: true,
-          children: [
-            createHeaderSection(loggedInUser.asData!.value!),
-            const SizedBox(
-              height: 32,
+    if (loggedInUserAsync is AsyncData) {
+      final loggedInUser = loggedInUserAsync.asData!.value!;
+      final thingsLearnedFuture =
+          ref.watch(postDBProvider).getUserPosts(loggedInUser.id);
+
+      return FutureBuilder(
+        future: thingsLearnedFuture,
+        builder: (context, snapshot) {
+          if (!snapshot.hasData ||
+              snapshot.connectionState != ConnectionState.done) {
+            return const LoadingView();
+          }
+          final thingsLearned = snapshot.data!;
+          return Container(
+            padding: const EdgeInsets.all(20),
+            child: ListView(
+              shrinkWrap: true,
+              children: [
+                createHeaderSection(loggedInUser),
+                const SizedBox(
+                  height: 32,
+                ),
+                createAboutMeSection(loggedInUser),
+                const SizedBox(
+                  height: 32,
+                ),
+                createThingsYouLearnedSection(
+                  loggedInUser,
+                  thingsLearned,
+                ),
+              ],
             ),
-            createAboutMeSection(loggedInUser.asData!.value!),
-            const SizedBox(
-              height: 32,
-            ),
-            createThingsYouLearnedSection(loggedInUser.asData!.value!),
-          ],
-        ),
+          );
+        },
       );
     } else {
-      return const Center(child: CircularProgressIndicator());
+      return const LoadingView();
     }
   }
 }

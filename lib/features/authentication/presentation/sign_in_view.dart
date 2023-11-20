@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:firebase_ui_auth/firebase_ui_auth.dart' hide ForgotPasswordView;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -56,25 +58,32 @@ class SignInView extends ConsumerWidget {
               context
                   .go(LimitedPageLayout.routeName + VerifyEmailView.routeName);
             } else {
-              context.go(HomeView.routeName);
+              ref.watch(loggedInUserProvider.future).then((user) {
+                if (user == null) {
+                  context.go(LimitedPageLayout.routeName +
+                      CreateAccountView.routeName);
+                }
+                context.go(HomeView.routeName);
+              });
             }
           }),
           AuthStateChangeAction<UserCreated>((context, state) {
-            if (!state.credential.user!.emailVerified) {
-              context
-                  .go(LimitedPageLayout.routeName + VerifyEmailView.routeName);
-            } else {
-              context.go(
-                  LimitedPageLayout.routeName + CreateAccountView.routeName);
-            }
+            // if (!state.credential.user!.emailVerified) {
+            //   context
+            //       .go(LimitedPageLayout.routeName + VerifyEmailView.routeName);
+            // } else {
+            context
+                .go(LimitedPageLayout.routeName + CreateAccountView.routeName);
+            // }
           }),
           AuthStateChangeAction<CredentialLinked>((context, state) {
-            if (!state.user.emailVerified) {
-              context
-                  .go(LimitedPageLayout.routeName + VerifyEmailView.routeName);
-            } else {
-              context.go(HomeView.routeName);
-            }
+            // if (!state.user.emailVerified) {
+            //   context
+            //       .go(LimitedPageLayout.routeName + VerifyEmailView.routeName);
+            // } else {
+            //   context.go(HomeView.routeName);
+            // }
+            log('HERE');
           }),
         ],
         headerMaxExtent: 250,
