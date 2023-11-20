@@ -21,14 +21,12 @@ class HomeView extends ConsumerStatefulWidget {
 class _HomeViewState extends ConsumerState<HomeView> {
   late UserDB userDB;
   late PostDB postDB;
-  User? loggedInUser;
 
   @override
   void initState() {
     super.initState();
     userDB = ref.read(userDBProvider);
     postDB = ref.read(postDBProvider);
-    loggedInUser = ref.read(loggedInUserNotifierProvider);
   }
 
   // https://stackoverflow.com/questions/72315755/close-an-expansiontile-when-another-expansiontile-is-tapped
@@ -39,45 +37,51 @@ class _HomeViewState extends ConsumerState<HomeView> {
     return postDB.getAll().map((e) => FeedPost(post: e)).toList();
   }
 
-  List<Widget> widgetsFromOrganization() {
+  Future<List<Widget>> widgetsFromOrganization(User? loggedInUser) async {
     if (loggedInUser == null) {
       return [const Text('Create an account to join an org')];
     }
 
-    return postDB
-        .getAll()
-        .where((e) {
-          var poster = userDB.getById(e.userId);
-          return loggedInUser!.organizationId == poster.organizationId;
-        })
-        .map((e) => FeedPost(post: e))
-        .toList();
+    var posts = postDB.getAll();
+    var filteredPosts = List.empty();
+    Future.forEach(posts, (e) async {
+      var poster = await userDB.getById(e.userId);
+      if (poster != null &&
+          loggedInUser.organizationId == poster.organizationId) {
+        filteredPosts.add(e);
+      }
+    });
+
+    return filteredPosts.map((e) => FeedPost(post: e)).toList();
   }
 
-  List<Widget> widgetsFromFriends() {
+  Future<List<Widget>> widgetsFromFriends(User? loggedInUser) async {
     if (loggedInUser == null) {
       return [const Text('Create an account to add friends')];
     }
-    return postDB
-        .getAll()
-        .where((e) {
-          var poster = userDB.getById(e.userId);
-          return loggedInUser!.friendIds.contains(poster.id);
-        })
-        .map((e) => FeedPost(post: e))
-        .toList();
+
+    var posts = postDB.getAll();
+    var filteredPosts = List.empty();
+    Future.forEach(posts, (e) async {
+      var poster = await userDB.getById(e.userId);
+      if (poster != null && loggedInUser.friendIds.contains(poster.id)) {
+        filteredPosts.add(e);
+      }
+    });
+
+    return filteredPosts.map((e) => FeedPost(post: e)).toList();
   }
 
-  Widget createSectionBody(int index) {
+  Future<Widget> createSectionBody(int index, User? loggedInUser) async {
     return switch (index) {
       0 => Column(
           children: widgetsFromEveryone(),
         ),
       1 => Column(
-          children: widgetsFromOrganization(),
+          children: await widgetsFromOrganization(loggedInUser),
         ),
       2 => Column(
-          children: widgetsFromFriends(),
+          children: await widgetsFromFriends(loggedInUser),
         ),
       _ => throw IndexError.withLength(index, sectionCount,
           message: 'Received an index outside defined sections.'),
@@ -88,41 +92,53 @@ class _HomeViewState extends ConsumerState<HomeView> {
   Widget build(BuildContext context) {
     userDB = ref.watch(userDBProvider);
     postDB = ref.watch(postDBProvider);
-    loggedInUser = ref.watch(loggedInUserNotifierProvider);
+    final loggedInUser = ref.watch(loggedInUserProvider);
 
-    return ListView.builder(
-      key: Key(selectedTile.toString()),
-      itemCount: sectionCount,
-      itemBuilder: (context, index) {
-        var headerStyle = const TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.w500,
-        );
-        return ExpansionTile(
-          initiallyExpanded: index == selectedTile,
-          title: Text(
-            switch (index) {
-              0 => 'From everyone',
-              1 => 'From your organization',
-              2 => 'From your friends',
-              _ => throw IndexError.withLength(
-                  index,
-                  sectionCount,
-                  message: 'Received an index outside defined sections.',
+    return switch (loggedInUser) {
+      AsyncData(:final value) => ListView.builder(
+          key: Key(selectedTile.toString()),
+          itemCount: sectionCount,
+          itemBuilder: (context, index) {
+            var headerStyle = const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w500,
+            );
+            return ExpansionTile(
+              initiallyExpanded: index == selectedTile,
+              title: Text(
+                switch (index) {
+                  0 => 'From everyone',
+                  1 => 'From your organization',
+                  2 => 'From your friends',
+                  _ => throw IndexError.withLength(
+                      index,
+                      sectionCount,
+                      message: 'Received an index outside defined sections.',
+                    ),
+                },
+                style: headerStyle,
+              ),
+              onExpansionChanged: (expanded) {
+                setState(() {
+                  // selectedTile = expanded ? index : -1;
+                });
+              },
+              children: [
+                FutureBuilder(
+                  future: createSectionBody(index, value),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData && snapshot.data != null) {
+                      return snapshot.data!;
+                    }
+                    return const CircularProgressIndicator();
+                  },
                 ),
-            },
-            style: headerStyle,
-          ),
-          onExpansionChanged: (expanded) {
-            setState(() {
-              // selectedTile = expanded ? index : -1;
-            });
+              ],
+            );
           },
-          children: [
-            createSectionBody(index),
-          ],
-        );
-      },
-    );
+        ),
+      AsyncError(:final error) => Text('Error: $error'),
+      _ => const Center(child: CircularProgressIndicator()),
+    };
   }
 }

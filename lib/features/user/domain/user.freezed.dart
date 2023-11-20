@@ -21,9 +21,10 @@ User _$UserFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$User {
   String get id => throw _privateConstructorUsedError;
+  String get userUid => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
-  String get organizationId => throw _privateConstructorUsedError;
   String get email => throw _privateConstructorUsedError;
+  String get organizationId => throw _privateConstructorUsedError;
   String get aboutMe => throw _privateConstructorUsedError;
   bool get isVerified => throw _privateConstructorUsedError;
   String get imagePath => throw _privateConstructorUsedError;
@@ -42,9 +43,10 @@ abstract class $UserCopyWith<$Res> {
   @useResult
   $Res call(
       {String id,
+      String userUid,
       String name,
-      String organizationId,
       String email,
+      String organizationId,
       String aboutMe,
       bool isVerified,
       String imagePath,
@@ -66,9 +68,10 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
   @override
   $Res call({
     Object? id = null,
+    Object? userUid = null,
     Object? name = null,
-    Object? organizationId = null,
     Object? email = null,
+    Object? organizationId = null,
     Object? aboutMe = null,
     Object? isVerified = null,
     Object? imagePath = null,
@@ -80,17 +83,21 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
+      userUid: null == userUid
+          ? _value.userUid
+          : userUid // ignore: cast_nullable_to_non_nullable
+              as String,
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
-      organizationId: null == organizationId
-          ? _value.organizationId
-          : organizationId // ignore: cast_nullable_to_non_nullable
-              as String,
       email: null == email
           ? _value.email
           : email // ignore: cast_nullable_to_non_nullable
+              as String,
+      organizationId: null == organizationId
+          ? _value.organizationId
+          : organizationId // ignore: cast_nullable_to_non_nullable
               as String,
       aboutMe: null == aboutMe
           ? _value.aboutMe
@@ -125,9 +132,10 @@ abstract class _$$UserImplCopyWith<$Res> implements $UserCopyWith<$Res> {
   @useResult
   $Res call(
       {String id,
+      String userUid,
       String name,
-      String organizationId,
       String email,
+      String organizationId,
       String aboutMe,
       bool isVerified,
       String imagePath,
@@ -146,9 +154,10 @@ class __$$UserImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = null,
+    Object? userUid = null,
     Object? name = null,
-    Object? organizationId = null,
     Object? email = null,
+    Object? organizationId = null,
     Object? aboutMe = null,
     Object? isVerified = null,
     Object? imagePath = null,
@@ -160,17 +169,21 @@ class __$$UserImplCopyWithImpl<$Res>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
+      userUid: null == userUid
+          ? _value.userUid
+          : userUid // ignore: cast_nullable_to_non_nullable
+              as String,
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
-      organizationId: null == organizationId
-          ? _value.organizationId
-          : organizationId // ignore: cast_nullable_to_non_nullable
-              as String,
       email: null == email
           ? _value.email
           : email // ignore: cast_nullable_to_non_nullable
+              as String,
+      organizationId: null == organizationId
+          ? _value.organizationId
+          : organizationId // ignore: cast_nullable_to_non_nullable
               as String,
       aboutMe: null == aboutMe
           ? _value.aboutMe
@@ -201,9 +214,10 @@ class __$$UserImplCopyWithImpl<$Res>
 class _$UserImpl with DiagnosticableTreeMixin implements _User {
   _$UserImpl(
       {required this.id,
+      required this.userUid,
       required this.name,
-      required this.organizationId,
       required this.email,
+      required this.organizationId,
       required this.aboutMe,
       required this.isVerified,
       required this.imagePath,
@@ -217,11 +231,13 @@ class _$UserImpl with DiagnosticableTreeMixin implements _User {
   @override
   final String id;
   @override
+  final String userUid;
+  @override
   final String name;
   @override
-  final String organizationId;
-  @override
   final String email;
+  @override
+  final String organizationId;
   @override
   final String aboutMe;
   @override
@@ -240,7 +256,7 @@ class _$UserImpl with DiagnosticableTreeMixin implements _User {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'User(id: $id, name: $name, organizationId: $organizationId, email: $email, aboutMe: $aboutMe, isVerified: $isVerified, imagePath: $imagePath, role: $role, friendIds: $friendIds)';
+    return 'User(id: $id, userUid: $userUid, name: $name, email: $email, organizationId: $organizationId, aboutMe: $aboutMe, isVerified: $isVerified, imagePath: $imagePath, role: $role, friendIds: $friendIds)';
   }
 
   @override
@@ -249,9 +265,10 @@ class _$UserImpl with DiagnosticableTreeMixin implements _User {
     properties
       ..add(DiagnosticsProperty('type', 'User'))
       ..add(DiagnosticsProperty('id', id))
+      ..add(DiagnosticsProperty('userUid', userUid))
       ..add(DiagnosticsProperty('name', name))
-      ..add(DiagnosticsProperty('organizationId', organizationId))
       ..add(DiagnosticsProperty('email', email))
+      ..add(DiagnosticsProperty('organizationId', organizationId))
       ..add(DiagnosticsProperty('aboutMe', aboutMe))
       ..add(DiagnosticsProperty('isVerified', isVerified))
       ..add(DiagnosticsProperty('imagePath', imagePath))
@@ -265,10 +282,11 @@ class _$UserImpl with DiagnosticableTreeMixin implements _User {
         (other.runtimeType == runtimeType &&
             other is _$UserImpl &&
             (identical(other.id, id) || other.id == id) &&
+            (identical(other.userUid, userUid) || other.userUid == userUid) &&
             (identical(other.name, name) || other.name == name) &&
+            (identical(other.email, email) || other.email == email) &&
             (identical(other.organizationId, organizationId) ||
                 other.organizationId == organizationId) &&
-            (identical(other.email, email) || other.email == email) &&
             (identical(other.aboutMe, aboutMe) || other.aboutMe == aboutMe) &&
             (identical(other.isVerified, isVerified) ||
                 other.isVerified == isVerified) &&
@@ -284,9 +302,10 @@ class _$UserImpl with DiagnosticableTreeMixin implements _User {
   int get hashCode => Object.hash(
       runtimeType,
       id,
+      userUid,
       name,
-      organizationId,
       email,
+      organizationId,
       aboutMe,
       isVerified,
       imagePath,
@@ -310,9 +329,10 @@ class _$UserImpl with DiagnosticableTreeMixin implements _User {
 abstract class _User implements User {
   factory _User(
       {required final String id,
+      required final String userUid,
       required final String name,
-      required final String organizationId,
       required final String email,
+      required final String organizationId,
       required final String aboutMe,
       required final bool isVerified,
       required final String imagePath,
@@ -324,11 +344,13 @@ abstract class _User implements User {
   @override
   String get id;
   @override
+  String get userUid;
+  @override
   String get name;
   @override
-  String get organizationId;
-  @override
   String get email;
+  @override
+  String get organizationId;
   @override
   String get aboutMe;
   @override

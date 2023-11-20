@@ -19,14 +19,12 @@ class ProfileView extends ConsumerStatefulWidget {
 }
 
 class _ProfileViewState extends ConsumerState<ProfileView> {
-  late User loggedInUser;
   late PostDB postDB;
   late OrganizationDB organizationDB;
 
   @override
   void initState() {
     super.initState();
-    loggedInUser = ref.read(loggedInUserNotifierProvider)!;
     postDB = ref.read(postDBProvider);
     organizationDB = ref.read(organizationDBProvider);
   }
@@ -36,7 +34,7 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
     fontWeight: FontWeight.bold,
   );
 
-  Widget createHeaderSection() {
+  Widget createHeaderSection(User loggedInUser) {
     Widget createTitleBody({required String title, required String body}) {
       return Container(
         margin: const EdgeInsets.only(bottom: 12),
@@ -115,7 +113,7 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
     );
   }
 
-  Widget createAboutMeSection() {
+  Widget createAboutMeSection(User loggedInUser) {
     var aboutMe = loggedInUser.aboutMe;
 
     return Column(
@@ -132,7 +130,7 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
     );
   }
 
-  Widget createThingsYouLearnedSection() {
+  Widget createThingsYouLearnedSection(User loggedInUser) {
     var thingsLearned = postDB.getUserPosts(loggedInUser.id);
 
     return Column(
@@ -158,25 +156,29 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
 
   @override
   Widget build(BuildContext context) {
-    loggedInUser = ref.watch(loggedInUserNotifierProvider)!;
+    final loggedInUser = ref.watch(loggedInUserProvider);
     postDB = ref.watch(postDBProvider);
 
-    return Container(
-      padding: const EdgeInsets.all(20),
-      child: ListView(
-        shrinkWrap: true,
-        children: [
-          createHeaderSection(),
-          const SizedBox(
-            height: 32,
-          ),
-          createAboutMeSection(),
-          const SizedBox(
-            height: 32,
-          ),
-          createThingsYouLearnedSection(),
-        ],
-      ),
-    );
+    if (loggedInUser is AsyncData) {
+      return Container(
+        padding: const EdgeInsets.all(20),
+        child: ListView(
+          shrinkWrap: true,
+          children: [
+            createHeaderSection(loggedInUser.asData!.value!),
+            const SizedBox(
+              height: 32,
+            ),
+            createAboutMeSection(loggedInUser.asData!.value!),
+            const SizedBox(
+              height: 32,
+            ),
+            createThingsYouLearnedSection(loggedInUser.asData!.value!),
+          ],
+        ),
+      );
+    } else {
+      return const Center(child: CircularProgressIndicator());
+    }
   }
 }

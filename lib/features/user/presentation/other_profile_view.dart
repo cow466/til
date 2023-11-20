@@ -30,8 +30,6 @@ class OtherProfileView extends ConsumerStatefulWidget {
 }
 
 class _OtherProfileViewState extends ConsumerState<OtherProfileView> {
-  late User user;
-  late User loggedInUser;
   late PostDB postDB;
   late FriendRequestDB friendRequestDB;
   late OrganizationDB organizationDB;
@@ -39,8 +37,6 @@ class _OtherProfileViewState extends ConsumerState<OtherProfileView> {
   @override
   void initState() {
     super.initState();
-    user = ref.read(userDBProvider).getById(widget.id);
-    loggedInUser = ref.read(loggedInUserNotifierProvider)!;
     postDB = ref.read(postDBProvider);
     friendRequestDB = ref.read(friendRequestDBProvider);
     organizationDB = ref.read(organizationDBProvider);
@@ -51,7 +47,7 @@ class _OtherProfileViewState extends ConsumerState<OtherProfileView> {
     fontWeight: FontWeight.bold,
   );
 
-  Widget createHeaderSection() {
+  Widget createHeaderSection(User? user) {
     Widget createTitleBody({required String title, required String body}) {
       return Container(
         margin: const EdgeInsets.only(bottom: 12),
@@ -95,82 +91,96 @@ class _OtherProfileViewState extends ConsumerState<OtherProfileView> {
       );
     }
 
-    var name = user.name;
-    var organization = organizationDB.getById(user.organizationId).name;
-    var email = user.email;
+    if (user != null) {
+      var name = user.name;
+      var organization = organizationDB.getById(user.organizationId).name;
+      var email = user.email;
 
-    return Row(
-      children: [
-        CircleAvatar(
-          minRadius: 75,
-          backgroundImage: AssetImage('assets/images/${user.imagePath}'),
-        ),
-        const SizedBox(
-          width: 20,
-        ),
-        Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            createTitleBody(
-              title: 'Name',
-              body: name,
-            ),
-            createTitleBody(
-              title: 'Organization',
-              body: organization,
-            ),
-            createEmailSection(
-              email: email,
-            ),
-          ],
-        ),
-      ],
-    );
+      return Row(
+        children: [
+          CircleAvatar(
+            minRadius: 75,
+            backgroundImage: AssetImage('assets/images/${user.imagePath}'),
+          ),
+          const SizedBox(
+            width: 20,
+          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              createTitleBody(
+                title: 'Name',
+                body: name,
+              ),
+              createTitleBody(
+                title: 'Organization',
+                body: organization,
+              ),
+              createEmailSection(
+                email: email,
+              ),
+            ],
+          ),
+        ],
+      );
+    }
+    return const CircularProgressIndicator();
   }
 
-  Widget createAboutMeSection() {
-    var aboutMe = user.aboutMe;
+  Widget createAboutMeSection(User? user) {
+    if (user != null) {
+      var aboutMe = user.aboutMe;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'About me',
-          style: headerStyle,
-        ),
-        Text(
-          aboutMe,
-        ),
-      ],
-    );
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'About me',
+            style: headerStyle,
+          ),
+          Text(
+            aboutMe,
+          ),
+        ],
+      );
+    }
+    return const CircularProgressIndicator();
   }
 
-  Widget createThingsYouLearnedSection() {
-    var thingsLearned = postDB.getUserPosts(user.id);
+  Widget createThingsYouLearnedSection(User? user) {
+    if (user != null) {
+      var thingsLearned = postDB.getUserPosts(user.id);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Some things this person learned',
-          style: headerStyle,
-        ),
-        Column(
-          children: thingsLearned
-              .map((e) => Container(
-                    margin: const EdgeInsets.only(
-                      top: 12,
-                    ),
-                    child: FeedPost(post: e),
-                  ))
-              .toList(),
-        ),
-      ],
-    );
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Some things this person learned',
+            style: headerStyle,
+          ),
+          Column(
+            children: thingsLearned
+                .map((e) => Container(
+                      margin: const EdgeInsets.only(
+                        top: 12,
+                      ),
+                      child: FeedPost(post: e),
+                    ))
+                .toList(),
+          ),
+        ],
+      );
+    }
+    return const CircularProgressIndicator();
   }
 
-  Widget createSendFriendRequestButton(BuildContext context) {
+  Widget createSendFriendRequestButton(
+      BuildContext context, User? user, User? loggedInUser) {
+    if (user == null || loggedInUser == null) {
+      return const CircularProgressIndicator();
+    }
+
     void handleSendFriendRequest() {
       final success = friendRequestDB.sendFromTo(loggedInUser.id, user.id);
       if (success) {
@@ -271,31 +281,45 @@ class _OtherProfileViewState extends ConsumerState<OtherProfileView> {
 
   @override
   Widget build(BuildContext context) {
-    user = ref.watch(userDBProvider).getById(widget.id);
-    loggedInUser = ref.watch(loggedInUserNotifierProvider)!;
+    final userFuture = ref.watch(userDBProvider).getById(widget.id);
+    final loggedInUser = ref.watch(loggedInUserProvider);
     postDB = ref.watch(postDBProvider);
 
-    return Container(
-      padding: const EdgeInsets.all(20),
-      child: Stack(
-        children: [
-          ListView(
-            shrinkWrap: true,
-            children: [
-              createHeaderSection(),
-              const SizedBox(
-                height: 32,
-              ),
-              createAboutMeSection(),
-              const SizedBox(
-                height: 32,
-              ),
-              createThingsYouLearnedSection(),
-            ],
+    return switch (loggedInUser) {
+      AsyncData(:final value) => Container(
+          padding: const EdgeInsets.all(20),
+          child: FutureBuilder(
+            future: Future.wait([userFuture]),
+            builder: (context, snapshot) {
+              if (snapshot.hasData &&
+                  snapshot.connectionState == ConnectionState.done) {
+                var user = snapshot.data![0];
+                return Stack(
+                  children: [
+                    ListView(
+                      shrinkWrap: true,
+                      children: [
+                        createHeaderSection(user),
+                        const SizedBox(
+                          height: 32,
+                        ),
+                        createAboutMeSection(user),
+                        const SizedBox(
+                          height: 32,
+                        ),
+                        createThingsYouLearnedSection(user),
+                      ],
+                    ),
+                    createSendFriendRequestButton(context, user, value),
+                  ],
+                );
+              }
+              return const CircularProgressIndicator();
+            },
           ),
-          createSendFriendRequestButton(context),
-        ],
-      ),
-    );
+        ),
+      AsyncError(:final error) => Text('Error: $error'),
+      _ => const CircularProgressIndicator(),
+    };
   }
 }

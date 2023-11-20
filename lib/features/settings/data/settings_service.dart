@@ -1,14 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsService {
-  Future<ThemeMode> themeMode() async => _readThemeMode();
+  SharedPreferences prefs;
 
-  Future<ThemeMode> _readThemeMode() async {
-    // Read settings from local storage
-    return ThemeMode.system;
+  SettingsService({
+    required this.prefs,
+  });
+
+  Future<ThemeMode> readThemeMode() async {
+    var themeMode = switch (prefs.get('themeMode')) {
+      'light' => ThemeMode.light,
+      'dark' => ThemeMode.dark,
+      'system' => ThemeMode.system,
+      _ => ThemeMode.system,
+    };
+    return themeMode;
   }
 
   Future<void> updateThemeMode(ThemeMode theme) async {
-    // Update settings in local storage
+    var themeModeString = switch (theme) {
+      ThemeMode.light => 'light',
+      ThemeMode.dark => 'dark',
+      ThemeMode.system => 'system',
+    };
+    prefs.setString('themeMode', themeModeString);
   }
 }
