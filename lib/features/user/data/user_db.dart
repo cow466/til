@@ -51,15 +51,16 @@ final class UserDB extends CrudCollection<User> {
     return await getAll();
   }
 
-  Future<List<User>> getUsers(List<String> userIDs) async {
+  Future<List<User>> getUsers(List<DocumentId> userIDs) async {
     return await getWhere('id', whereIn: userIDs);
   }
 
-  Future<String?> createUser({
-    required String userUid,
+  Future<DocumentId?> createUser({
+    required UserUid userUid,
     required String name,
     required String email,
     String? aboutMe,
+    required String imagePath,
   }) {
     final newUserId = createOne(User(
       id: '',
@@ -69,8 +70,31 @@ final class UserDB extends CrudCollection<User> {
       organizationId: '0',
       aboutMe: aboutMe ?? '',
       isVerified: false,
-      imagePath: 'winston_co.png',
+      imagePath: imagePath,
       role: Role.user,
+      friendIds: [],
+    ));
+    return newUserId;
+  }
+
+  Future<DocumentId?> createOrganizationAdmin({
+    required UserUid userUid,
+    required String name,
+    required String email,
+    String? aboutMe,
+    required DocumentId organizationId,
+    required String imagePath,
+  }) {
+    final newUserId = createOne(User(
+      id: '',
+      userUid: userUid,
+      name: name,
+      email: email,
+      organizationId: organizationId,
+      aboutMe: aboutMe ?? '',
+      isVerified: true,
+      imagePath: imagePath,
+      role: Role.organizationAdmin,
       friendIds: [],
     ));
     return newUserId;

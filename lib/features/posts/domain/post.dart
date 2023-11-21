@@ -8,7 +8,7 @@ part 'post.g.dart';
 @freezed
 class Post with _$Post implements JsonConvertible {
   factory Post({
-    required String userId,
+    required DocumentId userId,
     required String content,
     required DateTime postedAt,
   }) = _Post;

@@ -26,6 +26,9 @@ mixin _$Organization {
   String get website => throw _privateConstructorUsedError;
   String get address => throw _privateConstructorUsedError;
   List<String> get members => throw _privateConstructorUsedError;
+  List<String> get admins => throw _privateConstructorUsedError;
+  String get bannerImage => throw _privateConstructorUsedError;
+  String get logoImage => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -45,7 +48,10 @@ abstract class $OrganizationCopyWith<$Res> {
       String email,
       String website,
       String address,
-      List<String> members});
+      List<String> members,
+      List<String> admins,
+      String bannerImage,
+      String logoImage});
 }
 
 /// @nodoc
@@ -67,6 +73,9 @@ class _$OrganizationCopyWithImpl<$Res, $Val extends Organization>
     Object? website = null,
     Object? address = null,
     Object? members = null,
+    Object? admins = null,
+    Object? bannerImage = null,
+    Object? logoImage = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -93,6 +102,18 @@ class _$OrganizationCopyWithImpl<$Res, $Val extends Organization>
           ? _value.members
           : members // ignore: cast_nullable_to_non_nullable
               as List<String>,
+      admins: null == admins
+          ? _value.admins
+          : admins // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      bannerImage: null == bannerImage
+          ? _value.bannerImage
+          : bannerImage // ignore: cast_nullable_to_non_nullable
+              as String,
+      logoImage: null == logoImage
+          ? _value.logoImage
+          : logoImage // ignore: cast_nullable_to_non_nullable
+              as String,
     ) as $Val);
   }
 }
@@ -111,7 +132,10 @@ abstract class _$$OrganizationImplCopyWith<$Res>
       String email,
       String website,
       String address,
-      List<String> members});
+      List<String> members,
+      List<String> admins,
+      String bannerImage,
+      String logoImage});
 }
 
 /// @nodoc
@@ -131,6 +155,9 @@ class __$$OrganizationImplCopyWithImpl<$Res>
     Object? website = null,
     Object? address = null,
     Object? members = null,
+    Object? admins = null,
+    Object? bannerImage = null,
+    Object? logoImage = null,
   }) {
     return _then(_$OrganizationImpl(
       id: null == id
@@ -157,6 +184,18 @@ class __$$OrganizationImplCopyWithImpl<$Res>
           ? _value._members
           : members // ignore: cast_nullable_to_non_nullable
               as List<String>,
+      admins: null == admins
+          ? _value._admins
+          : admins // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      bannerImage: null == bannerImage
+          ? _value.bannerImage
+          : bannerImage // ignore: cast_nullable_to_non_nullable
+              as String,
+      logoImage: null == logoImage
+          ? _value.logoImage
+          : logoImage // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
@@ -170,8 +209,12 @@ class _$OrganizationImpl with DiagnosticableTreeMixin implements _Organization {
       this.email = '',
       this.website = '',
       this.address = '',
-      required final List<String> members})
-      : _members = members;
+      required final List<String> members,
+      required final List<String> admins,
+      this.bannerImage = 'images/uhm-banner.jpg',
+      this.logoImage = 'images/uhm-logo.png'})
+      : _members = members,
+        _admins = admins;
 
   factory _$OrganizationImpl.fromJson(Map<String, dynamic> json) =>
       _$$OrganizationImplFromJson(json);
@@ -197,9 +240,24 @@ class _$OrganizationImpl with DiagnosticableTreeMixin implements _Organization {
     return EqualUnmodifiableListView(_members);
   }
 
+  final List<String> _admins;
+  @override
+  List<String> get admins {
+    if (_admins is EqualUnmodifiableListView) return _admins;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_admins);
+  }
+
+  @override
+  @JsonKey()
+  final String bannerImage;
+  @override
+  @JsonKey()
+  final String logoImage;
+
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'Organization(id: $id, name: $name, email: $email, website: $website, address: $address, members: $members)';
+    return 'Organization(id: $id, name: $name, email: $email, website: $website, address: $address, members: $members, admins: $admins, bannerImage: $bannerImage, logoImage: $logoImage)';
   }
 
   @override
@@ -212,7 +270,10 @@ class _$OrganizationImpl with DiagnosticableTreeMixin implements _Organization {
       ..add(DiagnosticsProperty('email', email))
       ..add(DiagnosticsProperty('website', website))
       ..add(DiagnosticsProperty('address', address))
-      ..add(DiagnosticsProperty('members', members));
+      ..add(DiagnosticsProperty('members', members))
+      ..add(DiagnosticsProperty('admins', admins))
+      ..add(DiagnosticsProperty('bannerImage', bannerImage))
+      ..add(DiagnosticsProperty('logoImage', logoImage));
   }
 
   @override
@@ -225,13 +286,27 @@ class _$OrganizationImpl with DiagnosticableTreeMixin implements _Organization {
             (identical(other.email, email) || other.email == email) &&
             (identical(other.website, website) || other.website == website) &&
             (identical(other.address, address) || other.address == address) &&
-            const DeepCollectionEquality().equals(other._members, _members));
+            const DeepCollectionEquality().equals(other._members, _members) &&
+            const DeepCollectionEquality().equals(other._admins, _admins) &&
+            (identical(other.bannerImage, bannerImage) ||
+                other.bannerImage == bannerImage) &&
+            (identical(other.logoImage, logoImage) ||
+                other.logoImage == logoImage));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id, name, email, website,
-      address, const DeepCollectionEquality().hash(_members));
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      name,
+      email,
+      website,
+      address,
+      const DeepCollectionEquality().hash(_members),
+      const DeepCollectionEquality().hash(_admins),
+      bannerImage,
+      logoImage);
 
   @JsonKey(ignore: true)
   @override
@@ -254,7 +329,10 @@ abstract class _Organization implements Organization {
       final String email,
       final String website,
       final String address,
-      required final List<String> members}) = _$OrganizationImpl;
+      required final List<String> members,
+      required final List<String> admins,
+      final String bannerImage,
+      final String logoImage}) = _$OrganizationImpl;
 
   factory _Organization.fromJson(Map<String, dynamic> json) =
       _$OrganizationImpl.fromJson;
@@ -271,6 +349,12 @@ abstract class _Organization implements Organization {
   String get address;
   @override
   List<String> get members;
+  @override
+  List<String> get admins;
+  @override
+  String get bannerImage;
+  @override
+  String get logoImage;
   @override
   @JsonKey(ignore: true)
   _$$OrganizationImplCopyWith<_$OrganizationImpl> get copyWith =>

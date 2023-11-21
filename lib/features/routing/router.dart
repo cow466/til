@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:til/features/authentication/data/auth_controller_provider.dart';
 import 'package:til/features/authentication/data/logged_in_user_provider.dart';
+import 'package:til/features/organization/presentation/organization_profile.dart';
 import '../authentication/data/firebase_auth_provider.dart';
 import '../authentication/presentation/create_account_view.dart';
 import '../authentication/presentation/sign_in_view.dart';
@@ -28,16 +29,19 @@ GoRouter goRouter(GoRouterRef ref) {
   ref.watch(authControllerProvider);
   final authUserAsync = ref.watch(authStateChangesProvider);
   final loggedInUserAsync = ref.watch(loggedInUserProvider);
-  loggedInUserAsync is AsyncData && loggedInUserAsync.asData != null;
 
-  String initialLocation;
-  if (authUserAsync is AsyncData && authUserAsync.asData == null) {
-    initialLocation = LimitedPageLayout.routeName + SignInView.routeName;
-  } else if (loggedInUserAsync is AsyncData &&
-      loggedInUserAsync.asData == null) {
-    initialLocation = LimitedPageLayout.routeName + CreateAccountView.routeName;
-  } else {
-    initialLocation = HomeView.routeName;
+  String initialLocation = LimitedPageLayout.routeName + SignInView.routeName;
+  if (authUserAsync is AsyncData) {
+    if (authUserAsync.asData!.hasValue && authUserAsync.asData!.value != null) {
+      if (loggedInUserAsync is AsyncData &&
+          loggedInUserAsync.asData!.hasValue &&
+          loggedInUserAsync.asData!.value == null) {
+        initialLocation =
+            LimitedPageLayout.routeName + CreateAccountView.routeName;
+      } else {
+        initialLocation = HomeView.routeName;
+      }
+    }
   }
 
   return GoRouter(
@@ -99,6 +103,20 @@ GoRouter goRouter(GoRouterRef ref) {
             },
           ),
           GoRoute(
+            path: OrganizationProfileView.routeName,
+            parentNavigatorKey: mainShellNavigatorKey,
+            pageBuilder: (context, state) {
+              final id = state.pathParameters['id'];
+              Widget child;
+              if (id == null) {
+                child = const PageNotFoundView();
+              } else {
+                child = OrganizationProfileView(id: id);
+              }
+              return NoTransitionPage(child: child);
+            },
+          ),
+          GoRoute(
             path: SettingsView.routeName,
             parentNavigatorKey: mainShellNavigatorKey,
             pageBuilder: (context, state) => const NoTransitionPage(
@@ -106,6 +124,27 @@ GoRouter goRouter(GoRouterRef ref) {
             ),
           ),
         ],
+      ),
+      GoRoute(
+        path: LimitedPageLayout.routeName + SignInView.routeName,
+        parentNavigatorKey: rootNavigatorKey,
+        pageBuilder: (context, state) {
+          return const NoTransitionPage(child: SignInView());
+        },
+      ),
+      GoRoute(
+        path: LimitedPageLayout.routeName + VerifyEmailView.routeName,
+        parentNavigatorKey: rootNavigatorKey,
+        pageBuilder: (context, state) {
+          return const NoTransitionPage(child: VerifyEmailView());
+        },
+      ),
+      GoRoute(
+        path: LimitedPageLayout.routeName + CreateAccountView.routeName,
+        parentNavigatorKey: rootNavigatorKey,
+        pageBuilder: (context, state) {
+          return const NoTransitionPage(child: CreateAccountView());
+        },
       ),
       ShellRoute(
         navigatorKey: limitedShellNavigatorKey,
@@ -124,15 +163,6 @@ GoRouter goRouter(GoRouterRef ref) {
               final child = switch (subpath) {
                 HomeView.routeName => const NoTransitionPage(
                     child: HomeView(),
-                  ),
-                SignInView.routeName => const NoTransitionPage(
-                    child: SignInView(),
-                  ),
-                VerifyEmailView.routeName => const NoTransitionPage(
-                    child: VerifyEmailView(),
-                  ),
-                CreateAccountView.routeName => const NoTransitionPage(
-                    child: CreateAccountView(),
                   ),
                 _ => const NoTransitionPage(
                     child: PageNotFoundView(),

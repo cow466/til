@@ -6,6 +6,10 @@ abstract class JsonConvertible {
   Map<String, Object?> toJson();
 }
 
+typedef DocumentId = String;
+
+typedef UserUid = String;
+
 base class CrudCollection<T extends JsonConvertible> {
   final String collectionPath;
   final FactoryConstructor<T> fromJson;
@@ -27,12 +31,12 @@ base class CrudCollection<T extends JsonConvertible> {
     );
   }
 
-  Future<String> createOne(T item) async {
+  Future<DocumentId> createOne(T item) async {
     var newDocId = (await collectionRef.add(item)).id;
     return newDocId;
   }
 
-  Future<T?> getById(String id) async {
+  Future<T?> getById(DocumentId id) async {
     return (await collectionRef.doc(id).get()).data() as T?;
   }
 
@@ -69,5 +73,15 @@ base class CrudCollection<T extends JsonConvertible> {
         )
         .get();
     return items.docs.map((e) => e.data() as T).toList();
+  }
+
+  /// Returns whether deletion succeeded
+  Future<bool> deleteOne(DocumentId id) async {
+    try {
+      await collectionRef.doc(id).delete();
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 }
