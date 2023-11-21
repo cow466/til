@@ -3,7 +3,11 @@ import 'package:til/features/crud_collection.dart';
 import '../domain/post.dart';
 
 final class PostDB extends CrudCollection<Post> {
-  PostDB(this.ref) : super(collectionPath: 'posts', fromJson: Post.fromJson);
+  PostDB(this.ref)
+      : super(
+          collectionPath: 'posts',
+          fromJson: Post.fromJson,
+        );
 
   final ProviderRef<PostDB> ref;
   // final List<Post> _posts = [

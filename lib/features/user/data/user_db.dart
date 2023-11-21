@@ -3,7 +3,11 @@ import 'package:til/features/crud_collection.dart';
 import '../domain/user.dart';
 
 final class UserDB extends CrudCollection<User> {
-  UserDB(this.ref) : super(collectionPath: 'users', fromJson: User.fromJson);
+  UserDB(this.ref)
+      : super(
+          collectionPath: 'users',
+          fromJson: User.fromJson,
+        );
 
   final ProviderRef<UserDB> ref;
   // final _firestore = FirebaseFirestore.instance;

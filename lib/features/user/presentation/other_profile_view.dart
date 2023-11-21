@@ -3,6 +3,7 @@ import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:til/features/organization/domain/organization.dart';
 import 'package:til/features/posts/domain/post.dart';
 import '../../friends/data/friend_request_db.dart';
 import '../../friends/data/friend_request_db_provider.dart';
@@ -33,14 +34,12 @@ class OtherProfileView extends ConsumerStatefulWidget {
 class _OtherProfileViewState extends ConsumerState<OtherProfileView> {
   late PostDB postDB;
   late FriendRequestDB friendRequestDB;
-  late OrganizationDB organizationDB;
 
   @override
   void initState() {
     super.initState();
     postDB = ref.read(postDBProvider);
     friendRequestDB = ref.read(friendRequestDBProvider);
-    organizationDB = ref.read(organizationDBProvider);
   }
 
   final headerStyle = const TextStyle(
@@ -48,7 +47,7 @@ class _OtherProfileViewState extends ConsumerState<OtherProfileView> {
     fontWeight: FontWeight.bold,
   );
 
-  Widget createHeaderSection(User? user) {
+  Widget createHeaderSection(User? user, Organization? organization) {
     Widget createTitleBody({required String title, required String body}) {
       return Container(
         margin: const EdgeInsets.only(bottom: 12),
@@ -93,10 +92,6 @@ class _OtherProfileViewState extends ConsumerState<OtherProfileView> {
     }
 
     if (user != null) {
-      var name = user.name;
-      var organization = organizationDB.getById(user.organizationId).name;
-      var email = user.email;
-
       return Row(
         children: [
           CircleAvatar(
@@ -112,14 +107,15 @@ class _OtherProfileViewState extends ConsumerState<OtherProfileView> {
             children: [
               createTitleBody(
                 title: 'Name',
-                body: name,
+                body: user.name,
               ),
               createTitleBody(
                 title: 'Organization',
-                body: organization,
+                body: organization?.name ??
+                    'Error: Organization with id=${user.organizationId} not found',
               ),
               createEmailSection(
-                email: email,
+                email: user.email,
               ),
             ],
           ),
@@ -303,20 +299,29 @@ class _OtherProfileViewState extends ConsumerState<OtherProfileView> {
               final user = snapshot.data!;
               final thingsLearnedFuture =
                   ref.watch(postDBProvider).getUserPosts(user.id);
+              final organizationFuture = ref
+                  .watch(organizationDBProvider)
+                  .getById(user.organizationId);
+
               return FutureBuilder(
-                future: thingsLearnedFuture,
+                future: Future.wait([
+                  thingsLearnedFuture,
+                  organizationFuture,
+                ]),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData ||
                       snapshot.connectionState != ConnectionState.done) {
                     return const CircularProgressIndicator();
                   }
-                  final thingsLearned = snapshot.data!;
+                  final thingsLearned = snapshot.data![0] as List<Post>;
+                  final organization = snapshot.data![1] as Organization?;
+
                   return Stack(
                     children: [
                       ListView(
                         shrinkWrap: true,
                         children: [
-                          createHeaderSection(user),
+                          createHeaderSection(user, organization),
                           const SizedBox(
                             height: 32,
                           ),

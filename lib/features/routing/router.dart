@@ -26,15 +26,15 @@ GoRouter goRouter(GoRouterRef ref) {
   final limitedShellNavigatorKey = GlobalKey<NavigatorState>();
 
   ref.watch(authControllerProvider);
-  final authUser = ref.watch(authStateChangesProvider).valueOrNull;
-  final isLoggedIn = authUser != null;
-  final loggedInUser = ref.watch(loggedInUserProvider).valueOrNull;
-  final hasUserData = loggedInUser != null;
+  final authUserAsync = ref.watch(authStateChangesProvider);
+  final loggedInUserAsync = ref.watch(loggedInUserProvider);
+  loggedInUserAsync is AsyncData && loggedInUserAsync.asData != null;
 
   String initialLocation;
-  if (!isLoggedIn) {
+  if (authUserAsync is AsyncData && authUserAsync.asData == null) {
     initialLocation = LimitedPageLayout.routeName + SignInView.routeName;
-  } else if (!hasUserData) {
+  } else if (loggedInUserAsync is AsyncData &&
+      loggedInUserAsync.asData == null) {
     initialLocation = LimitedPageLayout.routeName + CreateAccountView.routeName;
   } else {
     initialLocation = HomeView.routeName;
