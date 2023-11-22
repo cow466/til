@@ -83,6 +83,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
   ) async {
     return switch (index) {
       0 => Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: widgetsFromEveryone(
             posts,
           ),
@@ -126,12 +127,15 @@ class _HomeViewState extends ConsumerState<HomeView> {
           AsyncData(:final value) => ListView.builder(
               key: Key(selectedTile.toString()),
               itemCount: sectionCount,
+              shrinkWrap: true,
               itemBuilder: (context, index) {
                 var headerStyle = const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w500,
                 );
                 return ExpansionTile(
+                  key: PageStorageKey(
+                      'home_view_expansion_tile_$index'.hashCode),
                   initiallyExpanded: index == selectedTile,
                   title: Text(
                     switch (index) {
