@@ -31,11 +31,11 @@ final class PostDB extends CrudCollection<Post> {
   //   ),
   // ];
 
-  Future<List<Post>> getUserPosts(String userId) async {
+  Future<List<Post>> getUserPosts(DocumentId userId) async {
     return await getWhere('userId', isEqualTo: userId);
   }
 
-  bool addPost({required String userId, required String content}) {
+  bool addPost({required DocumentId userId, required String content}) {
     createOne(Post(
       userId: userId,
       content: content,

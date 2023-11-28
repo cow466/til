@@ -5,24 +5,32 @@ import 'package:til/features/loading/presentation/loading_view.dart';
 import 'package:til/features/organization/domain/organization.dart';
 import 'package:til/features/posts/domain/post.dart';
 import 'package:til/features/posts/presentation/new_post_view.dart';
-import 'package:til/features/user/presentation/user_avatar.dart';
+import 'package:til/features/user/domain/user.dart';
 
+import '../../organization/data/organization_db.dart';
 import '../../organization/data/organization_db_provider.dart';
+import '../../posts/data/post_db.dart';
 import '../../posts/data/post_db_provider.dart';
-import '../domain/user.dart';
 import '../../authentication/data/logged_in_user_provider.dart';
 import '../../posts/presentation/feed_post.dart';
 
-class ProfileView extends ConsumerStatefulWidget {
-  const ProfileView({super.key});
+class OrganizationProfileView extends ConsumerStatefulWidget {
+  const OrganizationProfileView({
+    super.key,
+    required this.id,
+  });
 
-  static const routeName = '/profile';
+  static const routeName = '/organization/:id';
+
+  final String id;
 
   @override
-  ConsumerState<ProfileView> createState() => _ProfileViewState();
+  ConsumerState<OrganizationProfileView> createState() =>
+      _OrganizationProfileViewState();
 }
 
-class _ProfileViewState extends ConsumerState<ProfileView> {
+class _OrganizationProfileViewState
+    extends ConsumerState<OrganizationProfileView> {
   @override
   void initState() {
     super.initState();
@@ -79,9 +87,10 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
 
     return Row(
       children: [
-        UserAvatar(
-          user: loggedInUser,
-          minRadius: 75.0,
+        CircleAvatar(
+          minRadius: 75,
+          backgroundImage:
+              AssetImage('assets/images/${loggedInUser.imagePath}'),
         ),
         const SizedBox(
           width: 20,
@@ -114,10 +123,6 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
   Widget _createAboutMeSection(User loggedInUser) {
     var aboutMe = loggedInUser.aboutMe;
 
-    if (aboutMe.isEmpty) {
-      return Container();
-    }
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -132,10 +137,7 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
     );
   }
 
-  Widget _createThingsYouLearnedSection(
-    User loggedInUser,
-    List<Post> thingsLearned,
-  ) {
+  Widget _createMemberPostsSection(List<Post>? posts) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -145,8 +147,8 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
         ),
         Column(
           children: [
-            if (thingsLearned.isNotEmpty) ...[
-              ...thingsLearned
+            if (posts != null && posts.isNotEmpty) ...[
+              ...posts
                   .map((e) => Container(
                         margin: const EdgeInsets.only(
                           top: 12,
@@ -154,40 +156,7 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
                         child: FeedPost(post: e),
                       ))
                   .toList()
-            ] else ...[
-              const Text("You haven't made any posts!"),
-              const SizedBox(
-                height: 20,
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    width: 2.0,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                ),
-                constraints: const BoxConstraints(minWidth: 180.0),
-                child: SizedBox(
-                  height: 48.0,
-                  child: TextButton.icon(
-                    onPressed: () {
-                      context.go(NewPostView.routeName);
-                    },
-                    style: Theme.of(context).iconButtonTheme.style,
-                    icon: const Icon(
-                      Icons.add_outlined,
-                      size: 24.0,
-                    ),
-                    label: const Text(
-                      'Create new post',
-                      style: TextStyle(
-                        fontSize: 24.0,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ]
+            ],
           ],
         ),
       ],
@@ -200,20 +169,18 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
 
     if (loggedInUserAsync is AsyncData) {
       final loggedInUser = loggedInUserAsync.asData!.value!;
-      final thingsLearnedFuture =
-          ref.watch(postDBProvider).getUserPosts(loggedInUser.id);
-      final organizationFuture = ref
-          .watch(organizationDBProvider)
-          .getById(loggedInUser.organizationId);
+      final orgDB = ref.watch(organizationDBProvider);
+      final memberPostsFuture = orgDB.getMemberPosts(widget.id);
+      final organizationFuture = orgDB.getById(widget.id);
 
       return FutureBuilder(
-        future: Future.wait([thingsLearnedFuture, organizationFuture]),
+        future: Future.wait([memberPostsFuture, organizationFuture]),
         builder: (context, snapshot) {
           if (!snapshot.hasData ||
               snapshot.connectionState != ConnectionState.done) {
             return const LoadingView();
           }
-          final thingsLearned = snapshot.data![0] as List<Post>;
+          final memberPosts = snapshot.data![0] as List<Post>;
           final organization = snapshot.data![1] as Organization?;
 
           return Container(
@@ -229,10 +196,7 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
                 const SizedBox(
                   height: 32,
                 ),
-                _createThingsYouLearnedSection(
-                  loggedInUser,
-                  thingsLearned,
-                ),
+                _createMemberPostsSection(memberPosts),
               ],
             ),
           );

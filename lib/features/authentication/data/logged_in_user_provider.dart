@@ -1,5 +1,6 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:til/features/authentication/data/firebase_auth_provider.dart';
+import 'package:til/features/authentication/data/auth_controller_provider.dart';
+import 'package:til/features/firebase/data/firebase_auth_provider.dart';
 import '../../user/domain/user.dart';
 import '../../user/data/user_db_provider.dart';
 
@@ -7,6 +8,7 @@ part 'logged_in_user_provider.g.dart';
 
 @riverpod
 Future<User?> loggedInUser(LoggedInUserRef ref) async {
+  ref.watch(authControllerProvider);
   final uid = ref.watch(authStateChangesProvider).valueOrNull?.uid;
   if (uid == null) {
     return null;

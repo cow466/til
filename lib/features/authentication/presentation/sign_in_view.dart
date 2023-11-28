@@ -43,7 +43,8 @@ class SignInView extends ConsumerWidget {
             padding: const EdgeInsets.only(top: 20),
             child: TextButton(
               onPressed: () {
-                context.go(LimitedPageLayout.routeName + HomeView.routeName);
+                GoRouter.of(context)
+                    .push(LimitedPageLayout.routeName + HomeView.routeName);
               },
               child: const Text('Continue as guest'),
             ),

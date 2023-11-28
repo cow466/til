@@ -211,7 +211,7 @@ class __$$UserImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$UserImpl with DiagnosticableTreeMixin implements _User {
+class _$UserImpl implements _User {
   _$UserImpl(
       {required this.id,
       required this.userUid,
@@ -255,25 +255,8 @@ class _$UserImpl with DiagnosticableTreeMixin implements _User {
   }
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+  String toString() {
     return 'User(id: $id, userUid: $userUid, name: $name, email: $email, organizationId: $organizationId, aboutMe: $aboutMe, isVerified: $isVerified, imagePath: $imagePath, role: $role, friendIds: $friendIds)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'User'))
-      ..add(DiagnosticsProperty('id', id))
-      ..add(DiagnosticsProperty('userUid', userUid))
-      ..add(DiagnosticsProperty('name', name))
-      ..add(DiagnosticsProperty('email', email))
-      ..add(DiagnosticsProperty('organizationId', organizationId))
-      ..add(DiagnosticsProperty('aboutMe', aboutMe))
-      ..add(DiagnosticsProperty('isVerified', isVerified))
-      ..add(DiagnosticsProperty('imagePath', imagePath))
-      ..add(DiagnosticsProperty('role', role))
-      ..add(DiagnosticsProperty('friendIds', friendIds));
   }
 
   @override

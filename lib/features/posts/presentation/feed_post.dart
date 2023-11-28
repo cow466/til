@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:til/features/loading/presentation/loading_view.dart';
 import 'package:til/features/user/domain/user.dart';
+import 'package:til/features/user/presentation/user_avatar.dart';
 import '../domain/post.dart';
 import '../../user/data/user_db_provider.dart';
 import '../../common/time_format.dart';
@@ -23,7 +25,7 @@ class FeedPost extends ConsumerWidget {
       future: poster,
       builder: (context, snapshot) {
         if (snapshot.hasData && snapshot.data != null) {
-          var poster = snapshot.data!;
+          final poster = snapshot.data!;
           return Padding(
             padding: const EdgeInsets.all(12),
             child: Row(
@@ -35,10 +37,9 @@ class FeedPost extends ConsumerWidget {
                       OtherProfileView.routeName.replaceFirst(':id', poster.id),
                     );
                   },
-                  child: CircleAvatar(
-                    backgroundImage:
-                        AssetImage('assets/images/${poster.imagePath}'),
-                    maxRadius: 30,
+                  child: UserAvatar(
+                    user: poster,
+                    maxRadius: 30.0,
                   ),
                 ),
                 const SizedBox(
@@ -109,7 +110,7 @@ class FeedPost extends ConsumerWidget {
             ),
           );
         }
-        return const CircularProgressIndicator();
+        return const LoadingView();
       },
     );
   }

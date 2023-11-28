@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:til/features/authentication/data/firebase_auth_provider.dart';
+import 'package:go_router/go_router.dart';
+import 'package:til/features/authentication/data/auth_controller_provider.dart';
+import 'package:til/features/firebase/data/firebase_auth_provider.dart';
+import 'package:til/features/common/layouts/limited_layout.dart';
 import 'package:til/features/loading/presentation/loading_view.dart';
 import '../data/settings_provider.dart';
 
@@ -29,7 +32,7 @@ class SettingsView extends ConsumerWidget {
             TextButton(
               child: const Text('Sign out'),
               onPressed: () {
-                ref.watch(firebaseAuthProvider).signOut();
+                ref.read(authControllerProvider.notifier).signOut();
               },
             )
           ],

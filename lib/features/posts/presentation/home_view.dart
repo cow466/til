@@ -153,7 +153,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
                   ),
                   onExpansionChanged: (expanded) {
                     setState(() {
-                      // selectedTile = expanded ? index : -1;
+                      selectedTile = expanded ? index : -1;
                     });
                   },
                   children: [
