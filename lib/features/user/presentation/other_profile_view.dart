@@ -3,11 +3,12 @@ import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:til/features/loading/presentation/loading_view.dart';
 import 'package:til/features/organization/domain/organization.dart';
 import 'package:til/features/posts/domain/post.dart';
+import 'package:til/features/user/presentation/user_avatar.dart';
 import '../../friends/data/friend_request_db.dart';
 import '../../friends/data/friend_request_db_provider.dart';
-import '../../organization/data/organization_db.dart';
 import '../../organization/data/organization_db_provider.dart';
 import '../../posts/data/post_db.dart';
 import '../../posts/data/post_db_provider.dart';
@@ -94,9 +95,9 @@ class _OtherProfileViewState extends ConsumerState<OtherProfileView> {
     if (user != null) {
       return Row(
         children: [
-          CircleAvatar(
+          UserAvatar(
+            user: user,
             minRadius: 75,
-            backgroundImage: AssetImage('assets/images/${user.imagePath}'),
           ),
           const SizedBox(
             width: 20,
@@ -122,12 +123,16 @@ class _OtherProfileViewState extends ConsumerState<OtherProfileView> {
         ],
       );
     }
-    return const CircularProgressIndicator();
+    return const LoadingView();
   }
 
   Widget createAboutMeSection(User? user) {
     if (user != null) {
       var aboutMe = user.aboutMe;
+
+      if (aboutMe.isEmpty) {
+        return Container();
+      }
 
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -142,7 +147,7 @@ class _OtherProfileViewState extends ConsumerState<OtherProfileView> {
         ],
       );
     }
-    return const CircularProgressIndicator();
+    return const LoadingView();
   }
 
   Widget createThingsYouLearnedSection(
@@ -170,7 +175,7 @@ class _OtherProfileViewState extends ConsumerState<OtherProfileView> {
         ],
       );
     }
-    return const CircularProgressIndicator();
+    return const LoadingView();
   }
 
   Widget createSendFriendRequestButton(
@@ -179,7 +184,7 @@ class _OtherProfileViewState extends ConsumerState<OtherProfileView> {
     User? loggedInUser,
   ) {
     if (user == null || loggedInUser == null) {
-      return const CircularProgressIndicator();
+      return const LoadingView();
     }
 
     void handleSendFriendRequest() {
@@ -294,7 +299,7 @@ class _OtherProfileViewState extends ConsumerState<OtherProfileView> {
             builder: (context, snapshot) {
               if (!snapshot.hasData ||
                   snapshot.connectionState != ConnectionState.done) {
-                return const CircularProgressIndicator();
+                return const LoadingView();
               }
               final user = snapshot.data!;
               final thingsLearnedFuture =
@@ -311,7 +316,7 @@ class _OtherProfileViewState extends ConsumerState<OtherProfileView> {
                 builder: (context, snapshot) {
                   if (!snapshot.hasData ||
                       snapshot.connectionState != ConnectionState.done) {
-                    return const CircularProgressIndicator();
+                    return const LoadingView();
                   }
                   final thingsLearned = snapshot.data![0] as List<Post>;
                   final organization = snapshot.data![1] as Organization?;
@@ -344,7 +349,7 @@ class _OtherProfileViewState extends ConsumerState<OtherProfileView> {
           ),
         ),
       AsyncError(:final error) => Text('Error: $error'),
-      _ => const CircularProgressIndicator(),
+      _ => const LoadingView(),
     };
   }
 }

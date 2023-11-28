@@ -1,26 +1,27 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'auth_controller_provider.dart';
+part of 'cloud_storage_controller.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$authControllerHash() => r'fe7055de1849cc83d317c4b99bd7a14bef99a9a1';
+String _$cloudStorageControllerHash() =>
+    r'10dd2bea3c9f1e32a0a20307ed8fb5cc9de5cd36';
 
-/// See also [AuthController].
-@ProviderFor(AuthController)
-final authControllerProvider =
-    AutoDisposeAsyncNotifierProvider<AuthController, void>.internal(
-  AuthController.new,
-  name: r'authControllerProvider',
+/// See also [cloudStorageController].
+@ProviderFor(cloudStorageController)
+final cloudStorageControllerProvider =
+    Provider<CloudStorageController>.internal(
+  cloudStorageController,
+  name: r'cloudStorageControllerProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$authControllerHash,
+      : _$cloudStorageControllerHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$AuthController = AutoDisposeAsyncNotifier<void>;
+typedef CloudStorageControllerRef = ProviderRef<CloudStorageController>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

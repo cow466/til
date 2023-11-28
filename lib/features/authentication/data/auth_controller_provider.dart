@@ -1,7 +1,7 @@
 // https://codewithandrea.com/articles/flutter-riverpod-async-notifier/
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:til/features/authentication/data/firebase_auth_provider.dart';
+import 'package:til/features/firebase/data/firebase_auth_provider.dart';
 import 'package:til/features/organization/data/organization_db_provider.dart';
 import 'package:til/features/user/data/user_db_provider.dart';
 
@@ -18,6 +18,7 @@ class AuthController extends _$AuthController {
     required String name,
     required String email,
     required String aboutMe,
+    required String imagePath,
     required WidgetRef ref,
   }) async {
     state = const AsyncValue.loading();
@@ -32,7 +33,7 @@ class AuthController extends _$AuthController {
         name: name,
         email: email,
         aboutMe: aboutMe,
-        imagePath: 'winston_co.png',
+        imagePath: imagePath,
       );
       final userDoc = await userDB.getWhere('userUid', isEqualTo: uid);
       if (userDoc.isEmpty) {

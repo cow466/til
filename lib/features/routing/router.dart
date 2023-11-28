@@ -1,10 +1,15 @@
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:til/features/authentication/data/auth_controller_provider.dart';
 import 'package:til/features/authentication/data/logged_in_user_provider.dart';
+import 'package:til/features/images/presentation/crop_image_screen.dart';
+import 'package:til/features/images/presentation/display_picture_screen.dart';
+import 'package:til/features/images/presentation/take_picture_screen.dart';
 import 'package:til/features/organization/presentation/organization_profile.dart';
-import '../authentication/data/firebase_auth_provider.dart';
+import 'package:til/features/user/domain/user.dart';
+import '../firebase/data/firebase_auth_provider.dart';
 import '../authentication/presentation/create_account_view.dart';
 import '../authentication/presentation/sign_in_view.dart';
 import '../authentication/presentation/verify_email_view.dart';
@@ -143,7 +148,21 @@ GoRouter goRouter(GoRouterRef ref) {
         path: LimitedPageLayout.routeName + CreateAccountView.routeName,
         parentNavigatorKey: rootNavigatorKey,
         pageBuilder: (context, state) {
-          return const NoTransitionPage(child: CreateAccountView());
+          final stepParam = state.pathParameters['step'];
+          final parsedStep = int.tryParse(stepParam ?? '');
+          final roleParam = state.pathParameters['role'];
+          final parsedRole = switch (roleParam) {
+            String() =>
+              Role.values.firstWhere((e) => e.toString() == 'Role.$roleParam'),
+            null => null,
+          };
+          return NoTransitionPage(
+            child: CreateAccountView(
+              step: parsedStep,
+              role: parsedRole,
+              imagePath: (state.extra is String ? state.extra as String : null),
+            ),
+          );
         },
       ),
       ShellRoute(
@@ -172,7 +191,36 @@ GoRouter goRouter(GoRouterRef ref) {
             },
           ),
         ],
-      )
+      ),
+      GoRoute(
+        path: TakePictureScreen.routeName,
+        parentNavigatorKey: rootNavigatorKey,
+        pageBuilder: (context, state) {
+          return const NoTransitionPage(
+            child: TakePictureScreen(),
+          );
+        },
+      ),
+      GoRoute(
+        path: DisplayPictureScreen.routeName,
+        parentNavigatorKey: rootNavigatorKey,
+        pageBuilder: (context, state) {
+          return NoTransitionPage(
+              child: DisplayPictureScreen(
+            imagePath: state.extra! as String,
+          ));
+        },
+      ),
+      GoRoute(
+        path: CropImageScreen.routeName,
+        parentNavigatorKey: rootNavigatorKey,
+        pageBuilder: (context, state) {
+          return NoTransitionPage(
+              child: CropImageScreen(
+            file: state.extra as XFile?,
+          ));
+        },
+      ),
     ],
   );
 }

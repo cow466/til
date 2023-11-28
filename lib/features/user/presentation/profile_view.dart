@@ -5,10 +5,9 @@ import 'package:til/features/loading/presentation/loading_view.dart';
 import 'package:til/features/organization/domain/organization.dart';
 import 'package:til/features/posts/domain/post.dart';
 import 'package:til/features/posts/presentation/new_post_view.dart';
+import 'package:til/features/user/presentation/user_avatar.dart';
 
-import '../../organization/data/organization_db.dart';
 import '../../organization/data/organization_db_provider.dart';
-import '../../posts/data/post_db.dart';
 import '../../posts/data/post_db_provider.dart';
 import '../domain/user.dart';
 import '../../authentication/data/logged_in_user_provider.dart';
@@ -80,10 +79,9 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
 
     return Row(
       children: [
-        CircleAvatar(
-          minRadius: 75,
-          backgroundImage:
-              AssetImage('assets/images/${loggedInUser.imagePath}'),
+        UserAvatar(
+          user: loggedInUser,
+          minRadius: 75.0,
         ),
         const SizedBox(
           width: 20,
@@ -115,6 +113,10 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
 
   Widget _createAboutMeSection(User loggedInUser) {
     var aboutMe = loggedInUser.aboutMe;
+
+    if (aboutMe.isEmpty) {
+      return Container();
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

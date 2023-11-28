@@ -1,5 +1,4 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:flutter/foundation.dart';
 import 'package:til/features/crud_collection.dart';
 
 part 'user.freezed.dart';
