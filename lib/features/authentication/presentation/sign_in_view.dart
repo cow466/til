@@ -26,7 +26,7 @@ class SignInView extends ConsumerWidget {
           return Padding(
             padding: const EdgeInsets.all(20),
             child: Image.asset(
-              'images/til_logo.png',
+              'assets/images/til_logo.png',
             ),
           );
         },
@@ -34,7 +34,7 @@ class SignInView extends ConsumerWidget {
           return Padding(
             padding: const EdgeInsets.all(20),
             child: Image.asset(
-              'images/til_logo.png',
+              'assets/images/til_logo.png',
             ),
           );
         },

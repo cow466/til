@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -62,8 +63,16 @@ class CloudStorageController {
       const oneMegabyte = 1024 * 1024;
       final Uint8List? data = await fileRef.getData(oneMegabyte);
       if (data == null) return null;
-      return XFile.fromData(data, name: 'temp-${fileRef.name}');
+      final name = 'temp-${fileRef.name}';
+      if (kIsWeb) {
+        return XFile.fromData(data, name: name);
+      }
+      final dir = await getTemporaryDirectory();
+      return XFile.fromData(data, name: name, path: '${dir.path}/$name');
     } on FirebaseException catch (e) {
+      if (onError != null) onError(e);
+      return null;
+    } on MissingPlatformDirectoryException catch (e) {
       if (onError != null) onError(e);
       return null;
     }

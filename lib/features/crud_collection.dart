@@ -32,7 +32,7 @@ base class CrudCollection<T extends JsonConvertible> {
   }
 
   Future<DocumentId> createOne(T item) async {
-    var newDocId = (await collectionRef.add(item)).id;
+    final newDocId = (await collectionRef.add(item)).id;
     return newDocId;
   }
 
@@ -41,7 +41,7 @@ base class CrudCollection<T extends JsonConvertible> {
   }
 
   Future<List<T>> getAll() async {
-    var items = await collectionRef.get();
+    final items = await collectionRef.get();
     return items.docs.map((e) => e.data() as T).toList();
   }
 
@@ -57,7 +57,7 @@ base class CrudCollection<T extends JsonConvertible> {
       Iterable<Object?>? whereIn,
       Iterable<Object?>? whereNotIn,
       bool? isNull}) async {
-    var items = await collectionRef
+    final items = await collectionRef
         .where(
           field,
           isEqualTo: isEqualTo,
@@ -73,6 +73,18 @@ base class CrudCollection<T extends JsonConvertible> {
         )
         .get();
     return items.docs.map((e) => e.data() as T).toList();
+  }
+
+  Future<bool> updateOne(
+    DocumentId id,
+    Map<Object, Object?> data,
+  ) async {
+    try {
+      collectionRef.doc(id).update(data);
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   /// Returns whether deletion succeeded

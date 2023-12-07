@@ -211,8 +211,8 @@ class _$OrganizationImpl with DiagnosticableTreeMixin implements _Organization {
       this.address = '',
       required final List<String> members,
       required final List<String> admins,
-      this.bannerImage = 'images/uhm-banner.jpg',
-      this.logoImage = 'images/uhm-logo.png'})
+      this.bannerImage = 'assets/images/uhm-banner.jpg',
+      this.logoImage = 'assets/images/uhm-logo.png'})
       : _members = members,
         _admins = admins;
 

@@ -17,8 +17,9 @@ _$OrganizationImpl _$$OrganizationImplFromJson(Map<String, dynamic> json) =>
           (json['members'] as List<dynamic>).map((e) => e as String).toList(),
       admins:
           (json['admins'] as List<dynamic>).map((e) => e as String).toList(),
-      bannerImage: json['bannerImage'] as String? ?? 'images/uhm-banner.jpg',
-      logoImage: json['logoImage'] as String? ?? 'images/uhm-logo.png',
+      bannerImage:
+          json['bannerImage'] as String? ?? 'assets/images/uhm-banner.jpg',
+      logoImage: json['logoImage'] as String? ?? 'assets/images/uhm-logo.png',
     );
 
 Map<String, dynamic> _$$OrganizationImplToJson(_$OrganizationImpl instance) =>

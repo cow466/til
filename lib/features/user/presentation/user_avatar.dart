@@ -34,14 +34,15 @@ class UserAvatar extends ConsumerWidget {
       future: Future.wait([profileImageFuture, profileImageUrlFuture]),
       builder: (context, snapshot) {
         ImageProvider imageProvider =
-            const AssetImage('images/placeholder-profile.jpg');
+            const AssetImage('assets/images/placeholder-profile.jpg');
         if (snapshot.hasData) {
           final profileImage = snapshot.data![0] as XFile?;
           final profileImageUrl = snapshot.data![1] as String;
           if (kIsWeb) {
             imageProvider = NetworkImage(profileImageUrl);
           } else if (profileImage != null) {
-            imageProvider = FileImage(File(profileImage.path));
+            imageProvider = NetworkImage(profileImageUrl);
+            // imageProvider = FileImage(File(profileImage.path));
           }
         }
         return CircleAvatar(

@@ -15,8 +15,8 @@ class Organization with _$Organization implements JsonConvertible {
     @Default('') String address,
     required List<DocumentId> members,
     required List<DocumentId> admins,
-    @Default('images/uhm-banner.jpg') String bannerImage,
-    @Default('images/uhm-logo.png') String logoImage,
+    @Default('assets/images/uhm-banner.jpg') String bannerImage,
+    @Default('assets/images/uhm-logo.png') String logoImage,
   }) = _Organization;
 
   factory Organization.fromJson(Map<String, Object?> json) =>

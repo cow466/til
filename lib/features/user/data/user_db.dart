@@ -52,6 +52,9 @@ final class UserDB extends CrudCollection<User> {
   }
 
   Future<List<User>> getUsers(List<DocumentId> userIDs) async {
+    if (userIDs.isEmpty) {
+      return List.empty();
+    }
     return await getWhere('id', whereIn: userIDs);
   }
 

@@ -47,7 +47,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
       return [const Text('Create an account to join an org')];
     }
 
-    var filteredPosts = List.empty();
+    var filteredPosts = List.empty(growable: true);
     Future.forEach(posts, (e) async {
       var poster = await userDB.getById(e.userId);
       if (poster != null &&
@@ -65,7 +65,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
       return [const Text('Create an account to add friends')];
     }
 
-    var filteredPosts = List.empty();
+    var filteredPosts = List.empty(growable: true);
     Future.forEach(posts, (e) async {
       var poster = await userDB.getById(e.userId);
       if (poster != null && loggedInUser.friendIds.contains(poster.id)) {

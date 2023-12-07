@@ -3,6 +3,7 @@ import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:til/features/friends/domain/friend_request.dart';
 import 'package:til/features/loading/presentation/loading_view.dart';
 import 'package:til/features/organization/domain/organization.dart';
 import 'package:til/features/posts/domain/post.dart';
@@ -180,32 +181,23 @@ class _OtherProfileViewState extends ConsumerState<OtherProfileView> {
 
   Widget createSendFriendRequestButton(
     BuildContext context,
-    User? user,
-    User? loggedInUser,
+    User user,
+    User loggedInUser,
+    bool friendRequestAlreadySent,
   ) {
-    if (user == null || loggedInUser == null) {
-      return const LoadingView();
-    }
-
     void handleSendFriendRequest() {
-      final success = friendRequestDB.sendFromTo(loggedInUser.id, user.id);
-      if (success) {
-        developer.log(
-            'Send friend request from ${loggedInUser.name} to ${user.name}: success');
-        context.go(OtherProfileView.routeName.replaceFirst(':id', user.id));
-      } else {
-        developer.log(
-            'Send friend request from ${loggedInUser.name} to ${user.name}: failed');
-      }
+      friendRequestDB.sendFromTo(loggedInUser.id, user.id).then((success) {
+        if (success) {
+          developer.log(
+              'Send friend request from ${loggedInUser.name} to ${user.name}: success');
+          context.go(OtherProfileView.routeName.replaceFirst(':id', user.id));
+        } else {
+          developer.log(
+              'Send friend request from ${loggedInUser.name} to ${user.name}: failed');
+        }
+      });
     }
 
-    bool friendRequestAlreadySent = false;
-
-    if (friendRequestDB
-        .getFromUser(loggedInUser.id)
-        .any((fr) => fr.to == user.id)) {
-      friendRequestAlreadySent = true;
-    }
     return Positioned.fill(
       top: null,
       bottom: 0,
@@ -288,15 +280,18 @@ class _OtherProfileViewState extends ConsumerState<OtherProfileView> {
   @override
   Widget build(BuildContext context) {
     final userFuture = ref.watch(userDBProvider).getById(widget.id);
-    final loggedInUser = ref.watch(loggedInUserProvider);
+    final loggedInUserAsync = ref.watch(loggedInUserProvider);
     postDB = ref.watch(postDBProvider);
 
-    return switch (loggedInUser) {
+    return switch (loggedInUserAsync) {
       AsyncData(:final value) => Container(
           padding: const EdgeInsets.all(20),
           child: FutureBuilder(
             future: userFuture,
             builder: (context, snapshot) {
+              if (value == null) {
+                return const LoadingView();
+              }
               if (!snapshot.hasData ||
                   snapshot.connectionState != ConnectionState.done) {
                 return const LoadingView();
@@ -307,11 +302,14 @@ class _OtherProfileViewState extends ConsumerState<OtherProfileView> {
               final organizationFuture = ref
                   .watch(organizationDBProvider)
                   .getById(user.organizationId);
+              final friendRequestsSentFuture =
+                  ref.watch(friendRequestDBProvider).getFromUser(value.id);
 
               return FutureBuilder(
                 future: Future.wait([
                   thingsLearnedFuture,
                   organizationFuture,
+                  friendRequestsSentFuture,
                 ]),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData ||
@@ -320,6 +318,11 @@ class _OtherProfileViewState extends ConsumerState<OtherProfileView> {
                   }
                   final thingsLearned = snapshot.data![0] as List<Post>;
                   final organization = snapshot.data![1] as Organization?;
+                  final friendReqsSent =
+                      snapshot.data![2] as List<FriendRequest>;
+
+                  final friendRequestAlreadySent =
+                      friendReqsSent.any((fr) => fr.to == user.id);
 
                   return Stack(
                     children: [
@@ -340,7 +343,8 @@ class _OtherProfileViewState extends ConsumerState<OtherProfileView> {
                           ),
                         ],
                       ),
-                      createSendFriendRequestButton(context, user, value),
+                      createSendFriendRequestButton(
+                          context, user, value, friendRequestAlreadySent),
                     ],
                   );
                 },
