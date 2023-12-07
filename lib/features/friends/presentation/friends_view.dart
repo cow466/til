@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:til/features/authentication/data/logged_in_user_provider.dart';
 import 'package:til/features/friends/data/friend_request_db_provider.dart';
 import 'package:til/features/friends/domain/friend_request.dart';
@@ -8,6 +9,7 @@ import 'package:til/features/friends/presentation/suggested_person.dart';
 import 'package:til/features/loading/presentation/loading_view.dart';
 import 'package:til/features/user/data/user_db_provider.dart';
 import 'package:til/features/user/domain/user.dart';
+import 'package:til/features/user/presentation/other_profile_view.dart';
 import 'package:til/features/user/presentation/user_avatar.dart';
 
 class FriendsView extends ConsumerWidget {
@@ -55,12 +57,28 @@ class FriendsView extends ConsumerWidget {
       } else {
         body = [
           SizedBox(
-            height: 300,
-            child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: friends.map((friend) {
-                  return UserAvatar(user: friend);
-                }).toList()),
+            height: 60,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: friends.length,
+              itemBuilder: (context, index) {
+                final friend = friends[index];
+                return InkWell(
+                  onTap: () {
+                    context.go(
+                      OtherProfileView.routeName.replaceFirst(':id', friend.id),
+                    );
+                  },
+                  child: UserAvatar(
+                    user: friend,
+                    maxRadius: 30.0,
+                  ),
+                );
+              },
+              separatorBuilder: (context, index) => const SizedBox(
+                width: 8.0,
+              ),
+            ),
           ),
         ];
       }
@@ -71,6 +89,7 @@ class FriendsView extends ConsumerWidget {
             'Friends',
             style: TextStyle(
               fontSize: 24,
+              fontWeight: FontWeight.bold,
             ),
           ),
           ...body,
@@ -110,12 +129,28 @@ class FriendsView extends ConsumerWidget {
             ),
           ),
           SizedBox(
-            height: 300,
-            child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: users.map((user) {
-                  return UserAvatar(user: user);
-                }).toList()),
+            height: 60,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: users.length,
+              itemBuilder: (context, index) {
+                final user = users[index];
+                return InkWell(
+                  onTap: () {
+                    context.go(
+                      OtherProfileView.routeName.replaceFirst(':id', user.id),
+                    );
+                  },
+                  child: UserAvatar(
+                    user: user,
+                    maxRadius: 30.0,
+                  ),
+                );
+              },
+              separatorBuilder: (context, index) => const SizedBox(
+                width: 8.0,
+              ),
+            ),
           ),
         ],
       );
@@ -159,25 +194,27 @@ class FriendsView extends ConsumerWidget {
               horizontal: 20,
               vertical: 20,
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                createIncomingRequestsSection(incoming),
-                const SizedBox(
-                  height: 18,
-                ),
-                createFriendsSection(friends),
-                const SizedBox(
-                  height: 18,
-                ),
-                createSimilarSection(
-                    similar..removeWhere((e) => e.id == user.id)),
-                const SizedBox(
-                  height: 18,
-                ),
-                createYouMayKnowSection(
-                    youMayKnow..removeWhere((e) => e.id == user.id)),
-              ],
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  createIncomingRequestsSection(incoming),
+                  const SizedBox(
+                    height: 18,
+                  ),
+                  createFriendsSection(friends),
+                  const SizedBox(
+                    height: 18,
+                  ),
+                  createSimilarSection(
+                      similar..removeWhere((e) => e.id == user.id)),
+                  const SizedBox(
+                    height: 18,
+                  ),
+                  createYouMayKnowSection(
+                      youMayKnow..removeWhere((e) => e.id == user.id)),
+                ],
+              ),
             ),
           );
         },

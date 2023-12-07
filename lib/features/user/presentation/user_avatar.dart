@@ -45,11 +45,14 @@ class UserAvatar extends ConsumerWidget {
             // imageProvider = FileImage(File(profileImage.path));
           }
         }
-        return CircleAvatar(
-          radius: radius,
-          minRadius: minRadius,
-          maxRadius: maxRadius,
-          backgroundImage: imageProvider,
+        return Tooltip(
+          message: user.name,
+          child: CircleAvatar(
+            radius: radius,
+            minRadius: minRadius,
+            maxRadius: maxRadius,
+            backgroundImage: imageProvider,
+          ),
         );
       },
     );

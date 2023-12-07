@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:til/features/crud_collection.dart';
 import '../domain/user.dart';
@@ -55,7 +56,7 @@ final class UserDB extends CrudCollection<User> {
     if (userIDs.isEmpty) {
       return List.empty();
     }
-    return await getWhere('id', whereIn: userIDs);
+    return await getWhere(FieldPath.documentId, whereIn: userIDs);
   }
 
   Future<DocumentId?> createUser({
