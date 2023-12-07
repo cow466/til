@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:til/features/authentication/data/logged_in_user_provider.dart';
 import 'package:til/features/friends/data/friend_request_db_provider.dart';
 import 'package:til/features/friends/domain/friend_request.dart';
+import 'package:til/features/friends/presentation/incoming_friend_request.dart';
 import 'package:til/features/friends/presentation/suggested_person.dart';
 import 'package:til/features/loading/presentation/loading_view.dart';
 import 'package:til/features/user/data/user_db_provider.dart';
@@ -32,19 +33,11 @@ class FriendsView extends ConsumerWidget {
             height: 300,
             child: ListView(
                 scrollDirection: Axis.horizontal,
-                children: incoming.map((fr) {
-                  final userFuture = ref.watch(userDBProvider).getById(fr.from);
-                  return FutureBuilder(
-                    future: userFuture,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.done &&
-                          snapshot.data != null) {
-                        return UserAvatar(user: snapshot.data!);
-                      }
-                      return const LoadingView();
-                    },
-                  );
-                }).toList()),
+                children: incoming
+                    .map((fr) => IncomingFriendRequest(
+                          friendRequest: fr,
+                        ))
+                    .toList()),
           )
         ],
       );

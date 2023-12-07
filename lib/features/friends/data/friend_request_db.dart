@@ -56,7 +56,10 @@ final class FriendRequestDB extends CrudCollection<FriendRequest> {
     userDB.updateOne(fr.to, {
       'friendIds': FieldValue.arrayUnion([fr.from])
     });
-    ref.watch(userDBProvider).getById(fr.from);
+    deleteOne(friendReqId);
+  }
+
+  Future<void> ignore(DocumentId friendReqId) async {
     deleteOne(friendReqId);
   }
 }
