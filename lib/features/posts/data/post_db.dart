@@ -31,6 +31,12 @@ final class PostDB extends CrudCollection<Post> {
   //   ),
   // ];
 
+  @override
+  Future<List<Post>> getAll() async {
+    return (await super.getAll())
+      ..sort((a, b) => b.postedAt.compareTo(a.postedAt));
+  }
+
   Future<List<Post>> getUserPosts(DocumentId userId) async {
     return await getWhere('userId', isEqualTo: userId);
   }
