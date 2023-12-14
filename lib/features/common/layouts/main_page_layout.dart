@@ -73,7 +73,7 @@ class _MainPageLayoutState extends State<MainPageLayout> {
         destinations: const <Widget>[
           NavigationDestination(
             icon: Icon(
-              Icons.question_answer_outlined,
+              Icons.home_outlined,
               size: 30,
             ),
             label: 'Home',

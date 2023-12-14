@@ -9,6 +9,7 @@ import 'package:til/features/images/presentation/display_picture_screen.dart';
 import 'package:til/features/images/presentation/take_picture_screen.dart';
 import 'package:til/features/organization/presentation/organization_profile.dart';
 import 'package:til/features/user/domain/user.dart';
+import 'package:til/features/user/presentation/search_user_view.dart';
 import '../firebase/data/firebase_auth_provider.dart';
 import '../authentication/presentation/create_account_view.dart';
 import '../authentication/presentation/sign_in_view.dart';
@@ -120,6 +121,13 @@ GoRouter goRouter(GoRouterRef ref) {
               }
               return NoTransitionPage(child: child);
             },
+          ),
+          GoRoute(
+            path: SearchUserView.routeName,
+            parentNavigatorKey: mainShellNavigatorKey,
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: SearchUserView(),
+            ),
           ),
           GoRoute(
             path: SettingsView.routeName,

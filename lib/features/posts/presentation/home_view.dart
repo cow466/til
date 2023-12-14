@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:til/features/loading/presentation/loading_view.dart';
 import 'package:til/features/posts/domain/post.dart';
+import 'package:til/features/user/presentation/search_user_view.dart';
 
 import '../data/post_db.dart';
 import '../data/post_db_provider.dart';
@@ -115,65 +117,79 @@ class _HomeViewState extends ConsumerState<HomeView> {
     final loggedInUser = ref.watch(loggedInUserProvider);
     final postsFuture = postDB.getAll();
 
-    return FutureBuilder(
-      future: postsFuture,
-      builder: (context, snapshot) {
-        if (!snapshot.hasData ||
-            snapshot.connectionState != ConnectionState.done) {
-          return const LoadingView();
-        }
-        final posts = snapshot.data!;
-        return switch (loggedInUser) {
-          AsyncData(:final value) => ListView.builder(
-              key: Key(selectedTile.toString()),
-              itemCount: sectionCount,
-              shrinkWrap: true,
-              itemBuilder: (context, index) {
-                var headerStyle = const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w500,
-                );
-                return ExpansionTile(
-                  key: PageStorageKey(
-                      'home_view_expansion_tile_$index'.hashCode),
-                  initiallyExpanded: index == selectedTile,
-                  title: Text(
-                    switch (index) {
-                      0 => 'From everyone',
-                      1 => 'From your organization',
-                      2 => 'From your friends',
-                      _ => throw IndexError.withLength(
-                          index,
-                          sectionCount,
-                          message:
-                              'Received an index outside defined sections.',
-                        ),
-                    },
-                    style: headerStyle,
-                  ),
-                  onExpansionChanged: (expanded) {
-                    setState(() {
-                      selectedTile = expanded ? index : -1;
-                    });
-                  },
-                  children: [
-                    FutureBuilder(
-                      future: createSectionBody(index, value, posts),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData && snapshot.data != null) {
-                          return snapshot.data!;
-                        }
-                        return const LoadingView();
+    return Stack(
+      children: [
+        FutureBuilder(
+          future: postsFuture,
+          builder: (context, snapshot) {
+            if (!snapshot.hasData ||
+                snapshot.connectionState != ConnectionState.done) {
+              return const LoadingView();
+            }
+            final posts = snapshot.data!;
+            return switch (loggedInUser) {
+              AsyncData(:final value) => ListView.builder(
+                  key: Key(selectedTile.toString()),
+                  itemCount: sectionCount,
+                  shrinkWrap: true,
+                  itemBuilder: (context, index) {
+                    var headerStyle = const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                    );
+                    return ExpansionTile(
+                      key: PageStorageKey(
+                          'home_view_expansion_tile_$index'.hashCode),
+                      initiallyExpanded: index == selectedTile,
+                      title: Text(
+                        switch (index) {
+                          0 => 'From everyone',
+                          1 => 'From your organization',
+                          2 => 'From your friends',
+                          _ => throw IndexError.withLength(
+                              index,
+                              sectionCount,
+                              message:
+                                  'Received an index outside defined sections.',
+                            ),
+                        },
+                        style: headerStyle,
+                      ),
+                      onExpansionChanged: (expanded) {
+                        setState(() {
+                          selectedTile = expanded ? index : -1;
+                        });
                       },
-                    ),
-                  ],
-                );
-              },
-            ),
-          AsyncError(:final error) => Text('Error: $error'),
-          _ => const LoadingView(),
-        };
-      },
+                      children: [
+                        FutureBuilder(
+                          future: createSectionBody(index, value, posts),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData && snapshot.data != null) {
+                              return snapshot.data!;
+                            }
+                            return const LoadingView();
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              AsyncError(:final error) => Text('Error: $error'),
+              _ => const LoadingView(),
+            };
+          },
+        ),
+        Positioned(
+          bottom: 12.0,
+          right: 12.0,
+          child: FloatingActionButton(
+            onPressed: () {
+              GoRouter.of(context).push(SearchUserView.routeName);
+            },
+            child: const Icon(Icons.search),
+          ),
+        ),
+      ],
     );
   }
 }

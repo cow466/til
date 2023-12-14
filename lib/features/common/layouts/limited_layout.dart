@@ -50,7 +50,7 @@ class _LimitedPageLayoutState extends State<LimitedPageLayout> {
         destinations: const <Widget>[
           NavigationDestination(
             icon: Icon(
-              Icons.question_answer_outlined,
+              Icons.home_outlined,
               size: 30,
             ),
             label: 'Home',

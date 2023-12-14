@@ -292,6 +292,7 @@ class _OtherProfileViewState extends ConsumerState<OtherProfileView> {
               if (value == null) {
                 return const LoadingView();
               }
+              final loggedInUser = value;
               if (!snapshot.hasData ||
                   snapshot.connectionState != ConnectionState.done) {
                 return const LoadingView();
@@ -323,6 +324,8 @@ class _OtherProfileViewState extends ConsumerState<OtherProfileView> {
 
                   final friendRequestAlreadySent =
                       friendReqsSent.any((fr) => fr.to == user.id);
+                  final showFriendReqBtn =
+                      !loggedInUser.friendIds.contains(user.id);
 
                   return Stack(
                     children: [
@@ -343,8 +346,13 @@ class _OtherProfileViewState extends ConsumerState<OtherProfileView> {
                           ),
                         ],
                       ),
-                      createSendFriendRequestButton(
-                          context, user, value, friendRequestAlreadySent),
+                      if (showFriendReqBtn)
+                        createSendFriendRequestButton(
+                          context,
+                          user,
+                          loggedInUser,
+                          friendRequestAlreadySent,
+                        ),
                     ],
                   );
                 },

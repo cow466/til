@@ -40,7 +40,10 @@ class FriendsView extends ConsumerWidget {
                           friendRequest: fr,
                         ))
                     .toList()),
-          )
+          ),
+          const SizedBox(
+            height: 18,
+          ),
         ],
       );
     }
@@ -189,19 +192,13 @@ class FriendsView extends ConsumerWidget {
           final similar = snapshot.data![2] as List<User>;
           final youMayKnow = snapshot.data![3] as List<User>;
 
-          return Container(
-            padding: const EdgeInsetsDirectional.symmetric(
-              horizontal: 20,
-              vertical: 20,
-            ),
-            child: SingleChildScrollView(
+          return SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   createIncomingRequestsSection(incoming),
-                  const SizedBox(
-                    height: 18,
-                  ),
                   createFriendsSection(friends),
                   const SizedBox(
                     height: 18,
