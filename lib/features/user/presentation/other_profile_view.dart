@@ -7,6 +7,7 @@ import 'package:til/features/friends/domain/friend_request.dart';
 import 'package:til/features/loading/presentation/loading_view.dart';
 import 'package:til/features/organization/domain/organization.dart';
 import 'package:til/features/posts/domain/post.dart';
+import 'package:til/features/user/presentation/profile_view.dart';
 import 'package:til/features/user/presentation/user_avatar.dart';
 import '../../friends/data/friend_request_db.dart';
 import '../../friends/data/friend_request_db_provider.dart';
@@ -103,23 +104,26 @@ class _OtherProfileViewState extends ConsumerState<OtherProfileView> {
           const SizedBox(
             width: 20,
           ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              createTitleBody(
-                title: 'Name',
-                body: user.name,
-              ),
-              createTitleBody(
-                title: 'Organization',
-                body: organization?.name ??
-                    'Error: Organization with id=${user.organizationId} not found',
-              ),
-              createEmailSection(
-                email: user.email,
-              ),
-            ],
+          Flexible(
+            fit: FlexFit.tight,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                createTitleBody(
+                  title: 'Name',
+                  body: user.name,
+                ),
+                createTitleBody(
+                  title: 'Organization',
+                  body: organization?.name ??
+                      'Error: Organization with id=${user.organizationId} not found',
+                ),
+                createEmailSection(
+                  email: user.email,
+                ),
+              ],
+            ),
           ),
         ],
       );
@@ -298,6 +302,10 @@ class _OtherProfileViewState extends ConsumerState<OtherProfileView> {
                 return const LoadingView();
               }
               final user = snapshot.data!;
+              // redirect to profile if looking at yourself
+              if (user.id == loggedInUser.id) {
+                context.go(ProfileView.routeName);
+              }
               final thingsLearnedFuture =
                   ref.watch(postDBProvider).getUserPosts(user.id);
               final organizationFuture = ref
@@ -317,6 +325,7 @@ class _OtherProfileViewState extends ConsumerState<OtherProfileView> {
                       snapshot.connectionState != ConnectionState.done) {
                     return const LoadingView();
                   }
+
                   final thingsLearned = snapshot.data![0] as List<Post>;
                   final organization = snapshot.data![1] as Organization?;
                   final friendReqsSent =
